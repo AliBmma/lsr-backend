@@ -89,12 +89,13 @@ process.on('unhandledRejection', (err) => {
   process.exit(1);
 });
 
-// Export for Vercel serverless
-module.exports = app;
-
 // For Vercel serverless functions
+module.exports = (req, res) => {
+  return app(req, res);
+};
+
+// For local development
 if (require.main === module) {
-  // Only start server if this file is run directly
   const server = app.listen(PORT, () => {
     console.log(`
 ╔═══════════════════════════════════════════════════════════╗
