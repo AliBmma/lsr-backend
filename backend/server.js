@@ -114,3 +114,6 @@ process.on('unhandledRejection', (err) => {
   console.log(`Error: ${err.message}`);
   server.close(() => process.exit(1));
 });
+
+// Export for Vercel serverless
+module.exports = app;
