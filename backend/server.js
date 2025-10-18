@@ -83,8 +83,20 @@ app.use((req, res) => {
 
 const PORT = process.env.PORT || 5000;
 
-const server = app.listen(PORT, () => {
-  console.log(`
+// Handle unhandled promise rejections
+process.on('unhandledRejection', (err) => {
+  console.log(`Error: ${err.message}`);
+  process.exit(1);
+});
+
+// Export for Vercel serverless
+module.exports = app;
+
+// For Vercel serverless functions
+if (require.main === module) {
+  // Only start server if this file is run directly
+  const server = app.listen(PORT, () => {
+    console.log(`
 ╔═══════════════════════════════════════════════════════════╗
 ║                                                           ║
 ║   🚀 LSR Backend Server Running                          ║
@@ -107,13 +119,5 @@ const server = app.listen(PORT, () => {
 ║                                                           ║
 ╚═══════════════════════════════════════════════════════════╝
   `);
-});
-
-// Handle unhandled promise rejections
-process.on('unhandledRejection', (err) => {
-  console.log(`Error: ${err.message}`);
-  server.close(() => process.exit(1));
-});
-
-// Export for Vercel serverless
-module.exports = app;
+  });
+}
