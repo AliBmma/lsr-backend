@@ -5,11 +5,11 @@ const { protect, authorize } = require('../middleware/auth');
 
 // @route   GET /api/service-details
 // @desc    Get all service details
-// @access  Private
-router.get('/', protect, async (req, res) => {
+// @access  Public (for frontend dropdowns)
+router.get('/', async (req, res) => {
   try {
     const { isActive, category } = req.query;
-    
+
     let query = {};
     if (isActive !== undefined) query.isActive = isActive === 'true';
     if (category) query.category = category;
