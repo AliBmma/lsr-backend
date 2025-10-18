@@ -5,11 +5,11 @@ const { protect, authorize } = require('../middleware/auth');
 
 // @route   GET /api/departments
 // @desc    Get all departments
-// @access  Private
-router.get('/', protect, async (req, res) => {
+// @access  Public (for frontend dropdowns)
+router.get('/', async (req, res) => {
   try {
     const { isActive } = req.query;
-    
+
     let query = {};
     if (isActive !== undefined) query.isActive = isActive === 'true';
 
@@ -136,7 +136,7 @@ router.delete('/:id', protect, authorize('admin'), async (req, res) => {
     if (department.isDefault) {
       department.isActive = false;
       await department.save();
-      
+
       return res.status(200).json({
         success: true,
         message: 'Default department deactivated successfully',
@@ -159,3 +159,4 @@ router.delete('/:id', protect, authorize('admin'), async (req, res) => {
 });
 
 module.exports = router;
+
