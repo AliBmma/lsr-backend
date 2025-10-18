@@ -35,6 +35,9 @@ app.use('/api/departments', require('./routes/departments'));
 app.use('/api/service-details', require('./routes/serviceDetails'));
 app.use('/api/stats', require('./routes/stats'));
 
+// Seed route (temporary)
+app.post('/api/seed-once', require('./seed-once'));
+
 // Health check route
 app.get('/api/health', (req, res) => {
   res.status(200).json({
