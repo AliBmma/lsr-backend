@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>LSR Chatbot - Asiacell SCM</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background: #f8f9fa;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+
+    header {
+      background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    h2 {
+      margin: 0;
+      font-weight: 300;
+    }
+
+    .chat-container {
+      height: 500px;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+    }
+
+    .chat-history {
+      flex: 1;
+      overflow-y: auto;
+      border: 1px solid #dee2e6;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 15px;
+      background: #f8f9fa;
+    }
+
+    .message {
+      margin-bottom: 15px;
+      padding: 10px 15px;
+      border-radius: 18px;
+      max-width: 70%;
+      word-wrap: break-word;
+    }
+
+    .message.user {
+      background: #007bff;
+      color: white;
+      margin-left: auto;
+      text-align: right;
+    }
+
+    .message.bot {
+      background: #e9ecef;
+      color: #333;
+    }
+
+    .input-container {
+      display: flex;
+      gap: 10px;
+    }
+
+    .message-input {
+      flex: 1;
+      padding: 12px 15px;
+      border: 2px solid #dee2e6;
+      border-radius: 25px;
+      font-size: 16px;
+      outline: none;
+    }
+
+    .message-input:focus {
+      border-color: #dc3545;
+    }
+
+    .send-btn {
+      padding: 12px 20px;
+      background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+      color: white;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .send-btn:hover {
+      background: linear-gradient(135deg, #c82333 0%, #a71e2a 100%);
+      transform: translateY(-2px);
+    }
+
+    .back-btn {
+      display: inline-block;
+      padding: 10px 20px;
+      background: #6c757d;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 600;
+      margin-top: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .back-btn:hover {
+      background: #5a6268;
+      transform: translateY(-2px);
+    }
+
+    #chatbotTitle {
+      font-size: 36px;
+      font-weight: bold;
+      transition: opacity 0.5s ease;
+    }
+
+    @keyframes colorChange {
+      0% { color: #ffffff; }
+      50% { color: #ff0000; }
+      100% { color: #ffffff; }
+    }
+
+    #chatbotTitle #ai {
+      display: inline-block;
+      transition: all 0.3s ease;
+      transform-origin: center bottom;
+      animation: colorChange 2s infinite;
+    }
+
+    #chatbotTitle #dash {
+      display: inline-block;
+      transition: all 0.3s ease;
+      transform-origin: center bottom;
+      animation: colorChange 2s infinite 0.5s;
+    }
+
+    #chatbotTitle #lsr {
+      display: inline-block;
+      transition: all 0.3s ease;
+      transform-origin: center bottom;
+      animation: colorChange 2s infinite 1s;
+    }
+
+    .suggestions {
+      margin-bottom: 15px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .suggestion-btn {
+      padding: 6px 12px;
+      background: #e9ecef;
+      border: 1px solid #dee2e6;
+      border-radius: 15px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s ease;
+    }
+
+    .suggestion-btn:hover {
+      background: #dc3545;
+      color: white;
+      border-color: #dc3545;
+    }
+
+    .login-prompt {
+      text-align: center;
+      padding: 40px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      margin: 20px auto;
+      max-width: 500px;
+    }
+
+    .login-prompt h2 {
+      color: #dc3545;
+      margin-bottom: 10px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #495057;
+      font-size: 14px;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #dee2e6;
+      border-radius: 6px;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      box-sizing: border-box;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: #dc3545;
+      box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+    }
+
+    .login-btn {
+      padding: 12px 24px;
+      background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-block;
+      margin-top: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .login-btn:hover {
+      background: linear-gradient(135deg, #c82333 0%, #a71e2a 100%);
+      transform: translateY(-2px);
+    }
+
+    .error-message {
+      color: #dc3545;
+      font-size: 14px;
+      margin-top: 10px;
+      display: none;
+    }
+
+    .success-message {
+      color: #28a745;
+      font-size: 14px;
+      margin-top: 10px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="authHeader" class="auth-header" style="display: none;">
+    <div class="logo">Asiacell LSR Service</div>
+    <div class="user-info">
+      <span class="welcome-text" id="welcomeText">Welcome, </span>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+  </div>
+
+  <div id="loginPrompt" class="login-prompt">
+    <h2>Chatbot Login</h2>
+    <p>Please log in to access the AI Request Assistant.</p>
+
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required placeholder="Enter your username">
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required placeholder="Enter your password">
+      </div>
+
+      <div id="errorMessage" class="error-message">
+        Invalid username or password. Please try again.
+      </div>
+
+      <div id="successMessage" class="success-message">
+        Login successful! Loading chatbot...
+      </div>
+
+      <button type="submit" id="loginButton">Login</button>
+    </form>
+  </div>
+
+  <div id="mainContainer" class="container" style="display: none;">
+    <header>
+      <div class="logo">Asiacell - SCM -LSR</div>
+      <h2 id="chatbotTitle">Ali LSR</h2>
+    </header>
+
+    <div class="chat-container">
+      <div class="chat-history" id="chatHistory">
+        <div class="message bot">
+          <strong>LSR Assistant:</strong> Hello! i'm Ali your Ai assistant for the Logistic Service Request system. I can help you with information about requests. Try asking me questions like:<br>
+          • How many requests are there?<br>
+          • Show me completed requests<br>
+          • What's the status of SR-123?<br>
+          • Requests in IT department<br>
+          • Create new request
+        </div>
+      </div>
+
+      <div class="suggestions">
+        <button class="suggestion-btn" onclick="sendSuggestion('How many requests are there?')">How many requests?</button>
+        <button class="suggestion-btn" onclick="sendSuggestion('Show completed requests')">Show completed</button>
+        <button class="suggestion-btn" onclick="sendSuggestion('What\'s the status of SR-')">Status of SR-</button>
+        <button class="suggestion-btn" onclick="sendSuggestion('Requests in department')">By department</button>
+        <button class="suggestion-btn" onclick="sendSuggestion('Create a new request')">Create new request</button>
+      </div>
+
+      <div class="input-container">
+        <input type="text" class="message-input" id="messageInput" placeholder="Ask me about requests..." onkeypress="handleKeyPress(event)">
+        <button class="send-btn" onclick="sendMessage()">Send</button>
+      </div>
+    </div>
+
+    <div style="text-align: center; padding: 20px;">
+      <a href="admin.html" class="back-btn">← Back to Admin</a>
+      <a href="request-viewer.html" class="back-btn" style="margin-left: 10px;">← Back to Request Viewer</a>
+    </div>
+  </div>
+
+  <script>
+    // Check authentication on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      const isAuthenticated = localStorage.getItem('authenticated') === 'true';
+      const username = localStorage.getItem('username');
+      const userRole = localStorage.getItem('userRole');
+
+      if (isAuthenticated && username && ((userRole || '').toLowerCase() === 'requester' || (userRole || '').toLowerCase() === 'request-viewer')) {
+        // User is authenticated as requester or request-viewer - show the chatbot
+        document.getElementById('authHeader').style.display = 'flex';
+        document.getElementById('mainContainer').style.display = 'block';
+        document.getElementById('loginPrompt').style.display = 'none';
+        document.getElementById('welcomeText').textContent = 'Welcome, ' + username;
+
+        // Animate title change from Ali to Ai after 2 seconds
+        setTimeout(() => {
+          const title = document.getElementById('chatbotTitle');
+          title.innerHTML = '<span id="a">A</span><span id="l">l</span><span id="i">i</span> LSR';
+          const aSpan = document.getElementById('a');
+          const lSpan = document.getElementById('l');
+          const iSpan = document.getElementById('i');
+          setTimeout(() => {
+            lSpan.style.opacity = '0';
+            aSpan.style.transform = 'scale(1.5)';
+            iSpan.style.transform = 'scale(1.5)';
+            setTimeout(() => {
+              title.style.opacity = '0';
+              setTimeout(() => {
+                title.innerHTML = '<span id="ai">Ai</span> <span id="lsr">Logistic Service Request</span>';
+                title.style.textAlign = 'center';
+                document.getElementById('ai').style.transform = 'scale(1.2)';
+                document.getElementById('ai').style.marginRight = '30px';
+                document.getElementById('lsr').style.transform = 'scale(1.2)';
+                title.style.opacity = '1';
+              }, 500);
+            }, 500);
+          }, 500);
+        }, 2000);
+      } else {
+        // User is not authenticated or wrong role - show login prompt
+        document.getElementById('loginPrompt').style.display = 'block';
+        document.getElementById('authHeader').style.display = 'none';
+        document.getElementById('mainContainer').style.display = 'none';
+
+        // Clear authentication if wrong role
+        if (isAuthenticated && (userRole || '').toLowerCase() !== 'requester' && (userRole || '').toLowerCase() !== 'request-viewer') {
+          localStorage.removeItem('authenticated');
+          localStorage.removeItem('username');
+          localStorage.removeItem('userRole');
+        }
+      }
+    });
+
+    function logout() {
+      // Clear authentication data
+      localStorage.removeItem('authenticated');
+      localStorage.removeItem('username');
+      localStorage.removeItem('userRole');
+
+      // Reload the page to show login prompt
+      location.reload();
+    }
+
+    // Login form handler
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+      const errorMessage = document.getElementById('errorMessage');
+      const successMessage = document.getElementById('successMessage');
+
+      // Hide previous messages
+      errorMessage.style.display = 'none';
+      successMessage.style.display = 'none';
+
+      // Check credentials - only allow requester and request-viewer for chatbot
+      let userRole;
+      let userFound = false;
+
+      // Check for custom users in localStorage
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key.startsWith('user_')) {
+          try {
+            const userData = JSON.parse(localStorage.getItem(key));
+            if (userData.username === username && userData.password === password && (userData.role.toLowerCase() === 'requester' || userData.role.toLowerCase() === 'request-viewer')) {
+              userRole = userData.role.toLowerCase();
+              userFound = true;
+              break;
+            }
+          } catch (e) {
+            // Skip invalid user data
+          }
+        }
+      }
+
+      // If not found in custom users, check default users (only requester and request-viewer)
+      if (!userFound) {
+        if (username === 'zaid.nihad' && password === 'scmasiacell') {
+          userRole = 'requester';
+        } else if (username === 'laith.talib' && password === 'scmasiacell') {
+          userRole = 'request-viewer';
+        } else if (username === 'mustafa.ismael' && password === 'scmasiacell') {
+          userRole = 'request-viewer';
+        } else if (username === 'mustafa.munaf' && password === 'scmasiacell') {
+          userRole = 'request-viewer';
+        } else if (username === 'abdulrahman.mazin' && password === 'scmasiacell') {
+          userRole = 'request-viewer';
+        } else if (username === 'yasir.fri' && password === 'scmasiacell') {
+          userRole = 'request-viewer';
+        } else {
+          // Failed login
+          errorMessage.style.display = 'block';
+          return;
+        }
+      }
+
+      // Successful login
+      successMessage.style.display = 'block';
+
+      // Store authentication in localStorage
+      localStorage.setItem('authenticated', 'true');
+      localStorage.setItem('username', username);
+      localStorage.setItem('userRole', userRole);
+
+      // Reload to show chatbot
+      setTimeout(() => {
+        location.reload();
+      }, 1000);
+    });
+
+    let creationState = null;
+
+    // Function to get username for a specific role
+    function getUsernameForRole(role) {
+      // First check custom users added through diagnostic tool
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key.startsWith('user_')) {
+          try {
+            const userData = JSON.parse(localStorage.getItem(key));
+            if (userData.role === role) {
+              return userData.username;
+            }
+          } catch (e) {
+            // Skip invalid user data
+          }
+        }
+      }
+
+      // Check default users
+      const defaultUsers = {
+        'requester': 'zaid.nihad',
+        'request-viewer': 'laith.talib', // or mustafa.ismael, mustafa.munaf, abdulrahman.mazin, yasir.fri
+        'supervisor': 'ali.basil',
+        'logistic-control': 'sarbast.nadhmi',
+        'admin': 'mahmood.saed',
+        'chief': 'mohammed.radhwan',
+        'store-keeper': 'haider.kareem'
+      };
+
+      return defaultUsers[role] || 'Unknown';
+    }
+
+    // Function to send a message
+    function sendMessage() {
+      const input = document.getElementById('messageInput');
+      const message = input.value.trim();
+      if (message === '') return;
+
+      addMessage(message, 'user');
+      input.value = '';
+
+      // Process the message and get response
+      setTimeout(() => {
+        const response = processQuery(message);
+        addMessage(response, 'bot');
+      }, 500); // Simulate thinking time
+    }
+
+    // Function to handle Enter key press
+    function handleKeyPress(event) {
+      if (event.key === 'Enter') {
+        sendMessage();
+      }
+    }
+
+    // Function to send suggestion
+    function sendSuggestion(suggestion) {
+      document.getElementById('messageInput').value = suggestion;
+      sendMessage();
+    }
+
+    // Function to add message to chat
+    function addMessage(text, type) {
+      const chatHistory = document.getElementById('chatHistory');
+      const messageDiv = document.createElement('div');
+      messageDiv.className = `message ${type}`;
+      messageDiv.innerHTML = type === 'user' ? text : `<strong>LSR Assistant:</strong> ${text}`;
+      chatHistory.appendChild(messageDiv);
+      chatHistory.scrollTop = chatHistory.scrollHeight;
+    }
+
+    // Function to get all requests from localStorage
+    function getAllRequests() {
+      const allRequests = [];
+      const requestsBySR = {};
+
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key.startsWith('request_')) {
+          try {
+            const requestData = JSON.parse(localStorage.getItem(key));
+            const requestId = key.replace('request_', '');
+            const srNumber = requestData.srNumber;
+            const isCompleted = !!localStorage.getItem(`logistic_${requestId}`);
+
+            const request = {
+              id: requestId,
+              ...requestData,
+              isCompleted: isCompleted
+            };
+
+            if (srNumber) {
+              if (!requestsBySR[srNumber]) {
+                requestsBySR[srNumber] = [];
+              }
+              requestsBySR[srNumber].push(request);
+            } else {
+              // No SR number, add directly
+              allRequests.push(request);
+            }
+          } catch (e) {
+            console.error('Error parsing request:', e);
+          }
+        }
+      }
+
+      // For each SR number, choose the completed one if exists, otherwise the first one
+      for (const sr in requestsBySR) {
+        const srRequests = requestsBySR[sr];
+        const completedRequest = srRequests.find(req => req.isCompleted);
+        if (completedRequest) {
+          allRequests.push(completedRequest);
+        } else {
+          allRequests.push(srRequests[0]);
+        }
+      }
+
+      return allRequests;
+    }
+
+    // Function to get completed requests
+    function getCompletedRequests() {
+      const allRequests = getAllRequests();
+      return allRequests.filter(request => request.isCompleted);
+    }
+
+    // Function to process user query
+    function processQuery(query) {
+      const lowerQuery = query.toLowerCase();
+
+      // Handle request creation flow
+      if (creationState) {
+        if (lowerQuery === 'cancel') {
+          creationState = null;
+          return 'Request creation cancelled.';
+        }
+        const userRole = localStorage.getItem('userRole') || '';
+        const username = localStorage.getItem('username') || '';
+        switch (creationState.step) {
+          case 1:
+            creationState.data.srNumber = query;
+            creationState.step = 2;
+            return "Department? (e.g., HR, Technology, Finance, Logistics)";
+          case 2:
+            creationState.data.department = query;
+            creationState.data.requesterName = username;
+            creationState.step = 4; // Skip requester name input
+            return `Requester name set as ${username}. Chief name?`;
+          case 4:
+            if ((userRole || '').toLowerCase() === 'requester') {
+              // For requester role, set chiefName to the system chief username
+              const chiefUsername = getUsernameForRole('chief');
+              creationState.data.chiefName = chiefUsername;
+              creationState.step = 5;
+              return `Chief name set as ${chiefUsername}. Warehouse officer needed? (yes/no)`;
+            } else {
+              creationState.data.chiefName = query;
+              creationState.step = 5;
+              return "Warehouse officer needed? (yes/no)";
+            }
+          case 5:
+            const warehouseNeeded = lowerQuery === 'yes';
+            creationState.data.warehouseOfficerNeeded = warehouseNeeded;
+            if (warehouseNeeded) {
+              creationState.step = 6;
+              return "Document number?";
+            } else {
+              creationState.data.warehouseOfficer = "";
+              creationState.step = 7;
+              return "Service details?";
+            }
+          case 6:
+            creationState.data.warehouseOfficer = query;
+            creationState.step = 7;
+            return "Service details?";
+          case 7:
+            creationState.data.details = query;
+            // Auto set request date to today
+            creationState.data.requestDate = new Date().toISOString();
+            // Save the request like in requester.html
+            const requestId = creationState.data.srNumber.replace('SR-', '');
+            const srNum = creationState.data.srNumber;
+            localStorage.setItem(`request_${requestId}`, JSON.stringify(creationState.data));
+            localStorage.setItem(`pending_chief_approval_${requestId}`, JSON.stringify(creationState.data));
+            creationState = null;
+            return `Request created successfully! SR: ${srNum}, ID: ${requestId}`;
+        }
+      }
+
+      // Start request creation
+      if (lowerQuery.includes('create') && lowerQuery.includes('request')) {
+        const isAuthenticated = localStorage.getItem('authenticated') === 'true';
+        const userRole = localStorage.getItem('userRole') || '';
+        if (!isAuthenticated || ((userRole || '').toLowerCase() !== 'requester' && (userRole || '').toLowerCase() !== 'request-viewer')) {
+          return "Please log in as a requester or request-viewer to create requests.";
+        }
+        creationState = {step: 1, data: {}};
+        return "Let's create a new request. What's the SR number? (e.g., SR-123)";
+      }
+
+      // Count total requests
+      if (lowerQuery.includes('how many') && lowerQuery.includes('request')) {
+        const allRequests = getAllRequests();
+        if (lowerQuery.includes('completed')) {
+          const completed = getCompletedRequests();
+          return `There are ${completed.length} completed requests out of ${allRequests.length} total requests.`;
+        } else if (lowerQuery.includes('pending') || lowerQuery.includes('in-progress')) {
+          const pending = allRequests.filter(request => !localStorage.getItem(`logistic_${request.id}`));
+          return `There are ${pending.length} pending/in-progress requests out of ${allRequests.length} total requests.`;
+        } else {
+          return `There are ${allRequests.length} total requests in the system.`;
+        }
+      }
+
+      // All requests details
+      if (lowerQuery.includes('all requests') && (lowerQuery.includes('details') || lowerQuery.includes('detail'))) {
+        const allRequests = getAllRequests();
+        if (allRequests.length === 0) {
+          return 'There are no requests in the system.';
+        }
+        let response = `Here are the details of all ${allRequests.length} requests:\n\n`;
+        allRequests.slice(0, 5).forEach((req, index) => {
+          const status = req.isCompleted ? 'Completed' : 'Pending';
+          response += `${index + 1}. SR Number: ${req.srNumber || 'N/A'}\n`;
+          response += `   Department: ${req.department || 'N/A'}\n`;
+          response += `   Requester: ${req.requesterName || 'N/A'}\n`;
+          response += `   Chief: ${req.chiefName || 'N/A'}\n`;
+          response += `   Status: ${status}\n`;
+          response += `   Date: ${req.date ? new Date(req.date).toLocaleDateString() : 'N/A'}\n\n`;
+        });
+        if (allRequests.length > 5) {
+          response += `... and ${allRequests.length - 5} more requests`;
+        }
+        return response;
+      }
+
+      // Show requests
+      if (lowerQuery.includes('show') && lowerQuery.includes('request')) {
+        if (lowerQuery.includes('completed')) {
+          const completed = getCompletedRequests();
+          if (completed.length === 0) {
+            return 'There are no completed requests.';
+          }
+          let response = `Here are the ${completed.length} completed requests:\n`;
+          completed.slice(0, 10).forEach(req => {
+            response += `• ${req.srNumber || 'SR-N/A'} - ${req.department || 'N/A'} - ${req.requesterName || 'N/A'}\n`;
+          });
+          if (completed.length > 10) {
+            response += `\n... and ${completed.length - 10} more`;
+          }
+          return response;
+        } else {
+          const allRequests = getAllRequests();
+          if (allRequests.length === 0) {
+            return 'There are no requests in the system.';
+          }
+          let response = `Here are the ${allRequests.length} requests:\n`;
+          allRequests.slice(0, 10).forEach(req => {
+            const status = req.isCompleted ? 'Completed' : 'Pending';
+            response += `• ${req.srNumber || 'SR-N/A'} - ${req.department || 'N/A'} - ${status}\n`;
+          });
+          if (allRequests.length > 10) {
+            response += `\n... and ${allRequests.length - 10} more`;
+          }
+          return response;
+        }
+      }
+
+      // Status of specific request
+      const srMatch = lowerQuery.match(/status of (sr-?\d+)/i);
+      if (srMatch) {
+        const srNumber = srMatch[1].toUpperCase().replace(/-/g, '');
+        const allRequests = getAllRequests();
+        const request = allRequests.find(req => req.srNumber && req.srNumber.toUpperCase().replace(/-/g, '') === srNumber);
+
+        if (request) {
+          // Fetch request data and return status as text
+          let requesterData = {};
+          let machineData = {};
+          let logisticData = {};
+          const prices = {
+            crane: 142000,
+            worker: 25000,
+            tadano: 250000
+          };
+
+          try {
+            requesterData = JSON.parse(localStorage.getItem(`request_${request.id}`) || '{}');
+            machineData = JSON.parse(localStorage.getItem(`machine_${request.id}`) || '{}');
+            logisticData = JSON.parse(localStorage.getItem(`logistic_${request.id}`) || '{}');
+          } catch (e) {
+            console.error('Error fetching request data:', e);
+            return `Found request ${srNumber}, but error loading details.`;
+          }
+
+          const status = request.isCompleted ? 'Completed' : 'Pending';
+          const requestDate = requesterData.requestDate ? new Date(requesterData.requestDate).toLocaleDateString() : 'N/A';
+          const completeDate = (logisticData.completeWorkDate || machineData.completeWorkDate) ? new Date(logisticData.completeWorkDate || machineData.completeWorkDate).toLocaleDateString() : 'N/A';
+
+          let response = `**Request Status for ${requesterData.srNumber || srNumber}:**\n`;
+          response += `Status: ${status}\n`;
+          response += `Department: ${requesterData.department || 'N/A'}\n`;
+          response += `Requester: ${requesterData.requesterName || 'N/A'}\n`;
+          response += `Chief: ${requesterData.chiefName || 'N/A'}\n`;
+          response += `Request Date: ${requestDate}\n`;
+          if (status === 'Completed') {
+            response += `Completion Date: ${completeDate}\n`;
+          }
+
+          // Machines
+          let displayMachines = logisticData.machines || machineData.machines || [];
+          if (displayMachines.length > 0) {
+            response += `\n**Machines:**\n`;
+            displayMachines.forEach(machine => {
+              const machineName = machine.machine === 'crane' ? 'Crane' : machine.machine === 'worker' ? 'Worker' : machine.machine === 'tadano' ? 'Tadano 25 ton' : machine.machine;
+              response += `- ${machineName}: ${machine.count} x ${machine.days} days`;
+              if (machine.location) response += ` at ${machine.location}`;
+              response += '\n';
+            });
+
+            // Total price
+            let totalPrice = logisticData.totalPrice || 0;
+            if (!totalPrice && displayMachines.length > 0) {
+              totalPrice = displayMachines.reduce((sum, m) => {
+                const price = prices[m.machine] || 0;
+                return sum + (price * m.count * m.days);
+              }, 0);
+            }
+            if (totalPrice) {
+              response += `\nTotal Price: ${totalPrice.toLocaleString()} IQD\n`;
+            }
+          }
+
+          if (logisticData.logisticOfficer) {
+            response += `\nLogistic Officer: ${logisticData.logisticOfficer}\n`;
+          }
+
+          return response;
+        } else {
+          return `I couldn't find a request with SR number ${srNumber}.`;
+        }
+      }
+
+      // Query requests by SR number
+      const srQueryMatch = lowerQuery.match(/requests? by sr-?(\d+)/i);
+      if (srQueryMatch) {
+        const srNumber = 'SR-' + srQueryMatch[1];
+        const allRequests = getAllRequests();
+        const matchingRequests = allRequests.filter(req => req.srNumber && req.srNumber.toUpperCase() === srNumber.toUpperCase());
+
+        if (matchingRequests.length === 0) {
+          return `No requests found with SR number ${srNumber}.`;
+        }
+
+        let response = `Found ${matchingRequests.length} request(s) with SR number ${srNumber}:\n`;
+        matchingRequests.forEach(req => {
+          const status = req.isCompleted ? 'Completed' : 'Pending';
+          response += `• ${req.srNumber} - ${req.department || 'N/A'} - ${status}\n`;
+        });
+        return response;
+      }
+
+      // Transit requests
+      if (lowerQuery.includes('transit') && lowerQuery.includes('request')) {
+        const allRequests = getAllRequests();
+        const transitRequests = allRequests.filter(req => {
+          const desc = (req.description || '').toLowerCase();
+          const type = (req.serviceType || req.requestType || '').toLowerCase();
+          return desc.includes('transit') || type.includes('transit');
+        });
+
+        if (transitRequests.length === 0) {
+          return 'No transit requests found.';
+        }
+
+        // Check if user wants details
+        if (lowerQuery.includes('details') || lowerQuery.includes('detail')) {
+          let response = `Here are the details of ${transitRequests.length} transit requests:\n\n`;
+          transitRequests.slice(0, 5).forEach((req, index) => {
+            const status = req.isCompleted ? 'Completed' : 'Pending';
+            response += `${index + 1}. SR Number: ${req.srNumber || 'N/A'}\n`;
+            response += `   Department: ${req.department || 'N/A'}\n`;
+            response += `   Requester: ${req.requesterName || 'N/A'}\n`;
+            response += `   Chief: ${req.chiefName || 'N/A'}\n`;
+            response += `   Status: ${status}\n`;
+            response += `   Date: ${req.date ? new Date(req.date).toLocaleDateString() : 'N/A'}\n\n`;
+          });
+          if (transitRequests.length > 5) {
+            response += `... and ${transitRequests.length - 5} more transit requests`;
+          }
+          return response;
+        } else {
+          let response = `Found ${transitRequests.length} transit requests:\n`;
+          transitRequests.slice(0, 10).forEach(req => {
+            const status = req.isCompleted ? 'Completed' : 'Pending';
+            response += `• ${req.srNumber || 'SR-N/A'} - ${req.department || 'N/A'} - ${status}\n`;
+          });
+          if (transitRequests.length > 10) {
+            response += `\n... and ${transitRequests.length - 10} more`;
+          }
+          return response;
+        }
+      }
+
+      // Requests by department
+      const deptMatch = lowerQuery.match(/requests? in (.+) department/i);
+      if (deptMatch) {
+        const department = deptMatch[1].trim();
+        const allRequests = getAllRequests();
+        const deptRequests = allRequests.filter(req =>
+          req.department && req.department.toLowerCase().includes(department.toLowerCase())
+        );
+
+        if (deptRequests.length === 0) {
+          return `No requests found in ${department} department.`;
+        }
+
+        let response = `Found ${deptRequests.length} requests in ${department} department:\n`;
+        deptRequests.slice(0, 10).forEach(req => {
+          const status = req.isCompleted ? 'Completed' : 'Pending';
+          response += `• ${req.srNumber || 'SR-N/A'} - ${req.requesterName || 'N/A'} - ${status}\n`;
+        });
+        if (deptRequests.length > 10) {
+          response += `\n... and ${deptRequests.length - 10} more`;
+        }
+        return response;
+      }
+
+      // Help
+      if (lowerQuery.includes('help') || lowerQuery.includes('what can you do')) {
+        return `I can help you with:\n• Creating new requests (say "create a new request")\n• Counting requests (total, completed, pending)\n• Showing lists of requests\n• Showing detailed information for all requests (e.g., "all requests details")\n• Checking status of specific requests (e.g., "status of SR-123")\n• Finding requests by SR number (e.g., "requests by SR-3216")\n• Finding transit requests\n• Finding requests by department\n• General information about the LSR system\n\nTry asking me questions like the examples above!`;
+      }
+
+      // Default response
+      return "I'm sorry, I didn't understand that. Try asking about request counts, statuses, or departments. Type 'help' for more options.";
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Store Keeper Dashboard - Asiacell LSR Service</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 40px;
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      min-height: 100vh;
+    }
+
+    .auth-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding: 15px 20px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      border-left: 4px solid #dc3545;
+    }
+
+    .logo {
+      font-size: 28px;
+      font-weight: bold;
+      color: #dc3545;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .welcome-text {
+      font-size: 14px;
+      color: #495057;
+    }
+
+    .logout-btn {
+      padding: 8px 16px;
+      background: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+
+    .logout-btn:hover {
+      background: #c82333;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      overflow: hidden;
+      border: 1px solid #e9ecef;
+    }
+
+    header {
+      background: white;
+      color: #495057;
+      padding: 30px;
+      text-align: center;
+      border-radius: 10px 10px 0 0;
+      border-bottom: 1px solid #e9ecef;
+    }
+
+    .logo {
+      font-size: 28px;
+      font-weight: bold;
+      color: #dc3545;
+      margin-bottom: 10px;
+    }
+
+    h2 {
+      margin: 0;
+      font-weight: 300;
+      font-size: 22px;
+    }
+
+    .content {
+      padding: 30px;
+    }
+
+    .card {
+      background: #ffffff;
+      padding: 25px;
+      border-radius: 15px;
+      margin-bottom: 30px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+      border: 1px solid #e0e0e0;
+    }
+
+    .requests-list {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      margin-top: 20px;
+    }
+
+    .request-item {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 10px;
+      border-left: 4px solid #dc3545;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 2px solid #e9ecef;
+    }
+
+    .request-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(220, 53, 69, 0.2);
+      border-color: #dc3545;
+    }
+
+    .request-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #dee2e6;
+    }
+
+    .sr-number {
+      font-weight: bold;
+      color: #dc3545;
+      font-size: 16px;
+    }
+
+    .request-details {
+      margin-bottom: 15px;
+    }
+
+    .request-detail {
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+    }
+
+    .request-detail strong {
+      color: #495057;
+      min-width: 120px;
+      font-size: 14px;
+    }
+
+    .request-detail span {
+      color: #495057;
+      font-size: 14px;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .action-btn {
+      margin-top: 10px;
+      padding: 8px 16px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.3s ease;
+    }
+
+    .action-btn:hover {
+      background: #0056b3;
+    }
+
+    .send-back-section {
+      background: #fff3cd;
+      border: 2px solid #ffc107;
+      border-radius: 10px;
+      padding: 20px;
+      margin-top: 20px;
+    }
+
+    .send-back-section h4 {
+      color: #856404;
+      margin-top: 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .recipient-select {
+      width: 100%;
+      padding: 10px;
+      border: 2px solid #dee2e6;
+      border-radius: 6px;
+      margin-bottom: 15px;
+      font-size: 14px;
+    }
+
+    .note-checkbox-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .note-checkbox-container input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+    }
+
+    .note-textarea {
+      width: 100%;
+      min-height: 80px;
+      padding: 10px;
+      border: 2px solid #dee2e6;
+      border-radius: 6px;
+      margin-bottom: 15px;
+      resize: vertical;
+    }
+
+    .send-back-btn {
+      background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      margin-right: 10px;
+      transition: all 0.3s ease;
+    }
+
+    .send-back-btn:hover {
+      background: linear-gradient(135deg, #e0a800 0%, #d39e00 100%);
+      transform: translateY(-1px);
+    }
+
+    .sent-back-requests {
+      background: #f8d7da;
+      border-left: 4px solid #dc3545;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 10px;
+    }
+
+    .sent-back-requests h5 {
+      color: #721c24;
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+
+    .sent-back-item {
+      background: white;
+      padding: 10px;
+      border-radius: 6px;
+      margin-bottom: 8px;
+      border-left: 3px solid #dc3545;
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-header">
+    <div class="logo">Asiacell LSR Service</div>
+    <div class="user-info">
+      <span class="welcome-text" id="welcomeText">Welcome, </span>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <header>
+      <div class="logo">Asiacell LSR Service</div>
+      <h2>Store Keeper Dashboard</h2>
+    </header>
+
+    <div class="content">
+      <div class="card">
+        <h3>Requests Pending Store Keeper Approval</h3>
+        <div id="pendingStoreKeeperApprovalsList" class="requests-list">
+          <!-- Pending approvals will be dynamically populated here -->
+        </div>
+      </div>
+
+      <!-- Send Back Section -->
+      <div class="card">
+        <div class="send-back-section">
+          <h4>📤 Send Request Back</h4>
+          <p style="color: #856404; margin-bottom: 15px;">Select a request and send it back to the requester or request viewer for modifications.</p>
+
+          <select id="sendBackRequestSelect" class="recipient-select">
+            <option value="">-- Select Request to Send Back --</option>
+          </select>
+
+          <select id="recipientSelect" class="recipient-select" onchange="toggleRequestViewerSelect()">
+            <option value="">-- Select Recipient --</option>
+            <option value="requester">📝 Send Back to Requester</option>
+            <option value="request-viewer">👁️ Send Back to Request Viewer</option>
+          </select>
+
+          <select id="requestViewerSelect" class="recipient-select" style="display: none;">
+            <option value="">-- Select Request Viewer --</option>
+            <!-- Request viewers will be populated here -->
+          </select>
+
+          <div class="note-checkbox-container">
+            <input type="checkbox" id="addNoteCheckbox" onchange="toggleNoteField()">
+            <label for="addNoteCheckbox" style="color: #856404; cursor: pointer; font-weight: 600;">
+              📝 Add Note
+            </label>
+          </div>
+
+          <textarea id="storeKeeperNote" class="note-textarea" placeholder="Add a note explaining what changes are needed..." style="display: none;"></textarea>
+
+          <div>
+            <button class="send-back-btn" onclick="sendBackToRecipient()">📤 Send Back</button>
+            <button type="button" onclick="clearSendBackForm()" style="background: #6c757d; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer;">Clear</button>
+            <button type="button" onclick="manualRefresh()" style="background: #17a2b8; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; margin-left: 10px;">🔄 Refresh</button>
+          </div>
+          <div id="updateStatus" style="margin-top: 10px; font-size: 12px; color: #6c757d;"></div>
+        </div>
+      </div>
+
+      <!-- Requests Sent Back Section -->
+      <div class="card" id="sentBackRequestsSection" style="display: none;">
+        <h3 style="color: #721c24;">📤 Requests Sent Back</h3>
+        <div id="sentBackRequestsList" class="requests-list">
+          <!-- Sent back requests will be dynamically populated here -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Check authentication
+    document.addEventListener('DOMContentLoaded', function() {
+      const isAuthenticated = localStorage.getItem('authenticated') === 'true';
+      const username = localStorage.getItem('username');
+      const userRole = localStorage.getItem('userRole');
+
+      if (isAuthenticated && username && userRole === 'store-keeper') {
+        document.getElementById('welcomeText').textContent = 'Welcome, ' + username;
+        renderPendingStoreKeeperApprovals();
+        populateSendBackRequests();
+        renderSentBackRequests();
+        // Start interval updates
+        manageIntervalUpdates();
+      } else {
+        // Redirect to login if not store keeper
+        window.location.href = 'login.html';
+      }
+    });
+
+    // Function to toggle note field visibility
+    function toggleNoteField() {
+      const noteField = document.getElementById('storeKeeperNote');
+      const checkbox = document.getElementById('addNoteCheckbox');
+      noteField.style.display = checkbox.checked ? 'block' : 'none';
+    }
+
+    // Function to toggle request viewer selection
+    function toggleRequestViewerSelect() {
+      const recipientSelect = document.getElementById('recipientSelect');
+      const requestViewerSelect = document.getElementById('requestViewerSelect');
+
+      if (recipientSelect.value === 'request-viewer') {
+        requestViewerSelect.style.display = 'block';
+        populateRequestViewers();
+      } else {
+        requestViewerSelect.style.display = 'none';
+        requestViewerSelect.value = '';
+      }
+    }
+
+    // Function to populate request viewers
+    function populateRequestViewers() {
+      const select = document.getElementById('requestViewerSelect');
+      select.innerHTML = '<option value="">-- Select Request Viewer --</option>';
+
+      // Get all users with role 'request-viewer'
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key.startsWith('user_')) {
+          try {
+            const userData = JSON.parse(localStorage.getItem(key));
+            if (userData.role === 'request-viewer') {
+              const option = document.createElement('option');
+              option.value = userData.username;
+              option.textContent = userData.username;
+              select.appendChild(option);
+            }
+          } catch (e) {
+            console.error('Error parsing user data:', e);
+          }
+        }
+      }
+
+      // If no custom users, add default request-viewer
+      if (select.children.length === 1) {
+        const option = document.createElement('option');
+        option.value = 'request-viewer';
+        option.textContent = 'Default Request Viewer';
+        select.appendChild(option);
+      }
+    }
+
+    let isUserInteracting = false;
+    let updateInterval;
+
+    // Function to start/stop interval updates based on user interaction
+    function manageIntervalUpdates() {
+      if (isUserInteracting) {
+        clearInterval(updateInterval);
+        updateStatusDisplay('Updates paused while editing');
+      } else {
+        updateInterval = setInterval(() => {
+          renderPendingStoreKeeperApprovals();
+          populateSendBackRequests();
+          renderSentBackRequests();
+          updateStatusDisplay('Auto-updating every 5 seconds');
+        }, 5000);
+        updateStatusDisplay('Auto-updating every 5 seconds');
+      }
+    }
+
+    // Function to update status display
+    function updateStatusDisplay(message) {
+      const statusDiv = document.getElementById('updateStatus');
+      if (statusDiv) {
+        statusDiv.textContent = message;
+        statusDiv.style.color = isUserInteracting ? '#ffc107' : '#28a745';
+      }
+    }
+
+    // Function for manual refresh
+    function manualRefresh() {
+      renderPendingStoreKeeperApprovals();
+      populateSendBackRequests();
+      renderSentBackRequests();
+      updateStatusDisplay('Manually refreshed');
+      // Reset to auto-update after manual refresh
+      setTimeout(() => {
+        if (!isUserInteracting) {
+          updateStatusDisplay('Auto-updating every 5 seconds');
+        }
+      }, 2000);
+    }
+
+    // Track user interaction
+    document.addEventListener('focusin', function() {
+      isUserInteracting = true;
+      manageIntervalUpdates();
+    });
+
+    document.addEventListener('focusout', function() {
+      // Delay to allow for form interactions
+      setTimeout(() => {
+        isUserInteracting = false;
+        manageIntervalUpdates();
+      }, 1000);
+    });
+
+    // Function to populate send-back request dropdown
+    function populateSendBackRequests() {
+      const select = document.getElementById('sendBackRequestSelect');
+      const currentlySelected = select.value; // Preserve current selection
+
+      select.innerHTML = '<option value="">-- Select Request to Send Back --</option>';
+
+      // Get all requests from localStorage
+      const requests = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key.startsWith('request_') || key.startsWith('pending_request_')) {
+          try {
+            const requestData = JSON.parse(localStorage.getItem(key));
+            const requestId = key.replace('request_', '').replace('pending_request_', '');
+            requests.push({
+              id: requestId,
+              key: key,
+              ...requestData
+            });
+          } catch (e) {
+            console.error('Error parsing request:', e);
+          }
+        }
+      }
+
+      // Sort by date (newest first)
+      requests.sort((a, b) => new Date(b.requestDate || 0) - new Date(a.requestDate || 0));
+
+      // Add options to select
+      requests.forEach(request => {
+        const option = document.createElement('option');
+        option.value = request.id;
+        option.textContent = `${request.srNumber || 'N/A'} - ${request.requesterName || 'N/A'} - ${request.department || 'N/A'}`;
+        select.appendChild(option);
+      });
+
+      // Restore the previously selected value if it still exists
+      if (currentlySelected && requests.some(r => r.id === currentlySelected)) {
+        select.value = currentlySelected;
+      }
+    }
+
+    // Function to clear send-back form
+    function clearSendBackForm() {
+      document.getElementById('sendBackRequestSelect').value = '';
+      document.getElementById('recipientSelect').value = '';
+      document.getElementById('addNoteCheckbox').checked = false;
+      document.getElementById('storeKeeperNote').value = '';
+      document.getElementById('storeKeeperNote').style.display = 'none';
+    }
+
+    // Function to send request back to recipient
+    function sendBackToRecipient() {
+      const requestSelect = document.getElementById('sendBackRequestSelect');
+      const recipientSelect = document.getElementById('recipientSelect');
+      const requestViewerSelect = document.getElementById('requestViewerSelect');
+      const addNoteCheckbox = document.getElementById('addNoteCheckbox');
+      const storeKeeperNote = document.getElementById('storeKeeperNote').value;
+
+      if (!requestSelect.value) {
+        alert('Please select a request to send back.');
+        return;
+      }
+
+      if (!recipientSelect.value) {
+        alert('Please select a recipient.');
+        return;
+      }
+
+      if (recipientSelect.value === 'request-viewer' && !requestViewerSelect.value) {
+        alert('Please select a request viewer.');
+        return;
+      }
+
+      if (addNoteCheckbox.checked && !storeKeeperNote.trim()) {
+        alert('Please add a note before sending back.');
+        return;
+      }
+
+      const requestId = requestSelect.value;
+      const recipient = recipientSelect.value;
+
+      // Get request data
+      let requestData = null;
+      let requestKey = '';
+
+      // Find the request data
+      const possibleKeys = [`request_${requestId}`, `pending_request_${requestId}`];
+      for (const key of possibleKeys) {
+        const data = localStorage.getItem(key);
+        if (data) {
+          requestData = JSON.parse(data);
+          requestKey = key;
+          break;
+        }
+      }
+
+      if (!requestData) {
+        alert('Request data not found.');
+        return;
+      }
+
+      // Create machine data for tracking
+      const machineData = {
+        storeKeeperNote: addNoteCheckbox.checked ? storeKeeperNote : '',
+        status: recipient === 'requester' ? 'sent-back-to-requester' : 'sent-back-to-viewer',
+        sentBackBy: 'store-keeper',
+        sentBackDate: new Date().toISOString(),
+        originalRequestData: requestData
+      };
+
+      // Update the original request data to preserve all field values for editing
+      const updatedRequestData = {
+        ...requestData,
+        // Ensure all original field values are preserved
+        department: requestData.department,
+        srNumber: requestData.srNumber,
+        serviceDetail: requestData.serviceDetail,
+        details: requestData.details,
+        requesterName: requestData.requesterName,
+        chiefName: requestData.chiefName,
+        warehouseOfficerNeeded: requestData.warehouseOfficerNeeded || false,
+        warehouseOfficer: requestData.warehouseOfficer || '',
+        requestDate: requestData.requestDate,
+        // Add sent-back metadata
+        sentBackFrom: 'store-keeper',
+        sentBackNote: addNoteCheckbox.checked ? storeKeeperNote : '',
+        sentBackDate: new Date().toISOString()
+      };
+
+      // Save machine data with consistent ID
+      localStorage.setItem(`machine_${requestId}`, JSON.stringify(machineData));
+
+      // Store in sent-back tracking
+      localStorage.setItem(`sent_back_store_keeper_${requestId}`, JSON.stringify({
+        ...updatedRequestData,
+        sentBackBy: 'store-keeper',
+        sentBackDate: new Date().toISOString(),
+        recipient: recipient,
+        note: addNoteCheckbox.checked ? storeKeeperNote : ''
+      }));
+
+      // Update the original request data to preserve all field values
+      localStorage.setItem(requestKey, JSON.stringify(updatedRequestData));
+
+      // Remove from pending store keeper approval if it exists
+      localStorage.removeItem(`pending_store_keeper_approval_${requestId}`);
+
+      // Remove from other pending locations
+      localStorage.removeItem(`pending_request_${requestId}`);
+      localStorage.removeItem(`pending_chief_approval_${requestId}`);
+
+      // Show confirmation message
+      const recipientText = recipient === 'requester' ? 'requester' : 'request viewer';
+      alert(`Request ${requestData.srNumber} has been sent back to the ${recipientText} with your note!`);
+
+      // Clear form and refresh displays
+      clearSendBackForm();
+      renderPendingStoreKeeperApprovals();
+      renderSentBackRequests();
+    }
+
+    // Function to render sent-back requests
+    function renderSentBackRequests() {
+      const container = document.getElementById('sentBackRequestsList');
+      const section = document.getElementById('sentBackRequestsSection');
+      container.innerHTML = '';
+
+      let hasSentBackRequests = false;
+
+      // Check for sent-back requests from store keeper
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key.startsWith('sent_back_store_keeper_')) {
+          try {
+            const sentBackData = JSON.parse(localStorage.getItem(key));
+            const requestId = key.replace('sent_back_store_keeper_', '');
+
+            const requestHtml = `
+              <div class="sent-back-item">
+                <div class="request-header">
+                  <div class="sr-number">${sentBackData.srNumber || 'SR-N/A'}</div>
+                  <div class="status-badge" style="background: #f8d7da; color: #721c24;">
+                    Sent Back to ${sentBackData.recipient === 'requester' ? 'Requester' : 'Request Viewer'}
+                  </div>
+                </div>
+                <div class="request-details">
+                  <div class="request-detail"><strong>Department:</strong> <span>${sentBackData.department || 'Not specified'}</span></div>
+                  <div class="request-detail"><strong>Requester:</strong> <span>${sentBackData.requesterName || 'Not specified'}</span></div>
+                  <div class="request-detail"><strong>Sent Back Date:</strong> <span>${new Date(sentBackData.sentBackDate).toLocaleDateString()}</span></div>
+                  ${sentBackData.note ? `<div class="request-detail"><strong>Note:</strong> <span>${sentBackData.note}</span></div>` : ''}
+                </div>
+              </div>
+            `;
+            container.insertAdjacentHTML('beforeend', requestHtml);
+            hasSentBackRequests = true;
+          } catch (e) {
+            console.error('Error parsing sent-back request:', e);
+          }
+        }
+      }
+
+      // Show/hide the section based on whether there are sent-back requests
+      section.style.display = hasSentBackRequests ? 'block' : 'none';
+
+      if (!hasSentBackRequests) {
+        container.innerHTML = '<p>No requests have been sent back.</p>';
+      }
+    }
+
+    function renderPendingStoreKeeperApprovals() {
+      const container = document.getElementById('pendingStoreKeeperApprovalsList');
+      container.innerHTML = '';
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key.startsWith('pending_store_keeper_approval_')) {
+          try {
+            const data = JSON.parse(localStorage.getItem(key));
+            const requestId = key.replace('pending_store_keeper_approval_', '');
+            const requestData = JSON.parse(localStorage.getItem(`request_${requestId}`) || '{}');
+            // Check if this is a transit request (no machine data fields like completeWorkDate)
+            const isTransit = !data.completeWorkDate && requestData.isTransit;
+            const machineData = isTransit ? null : data;
+            const requestHtml = `
+              <div class="request-item" id="store-keeper-request-${requestId}">
+                <div class="request-header">
+                  <div class="sr-number">${requestData.srNumber || 'SR-N/A'}</div>
+                  <div class="status-badge">Pending Store Keeper Approval${isTransit ? ' (Transit)' : ''}</div>
+                </div>
+                <div class="request-details">
+                  <div class="request-detail"><strong>Department:</strong> <span>${requestData.department || 'Not specified'}</span></div>
+                  <div class="request-detail"><strong>Requester:</strong> <span>${requestData.requesterName || 'Not specified'}</span></div>
+                  <div class="request-detail"><strong>Warehouse Officer:</strong> <span>${requestData.warehouseOfficer || 'Not specified'}</span></div>
+                  ${isTransit ? '' : `<div class="request-detail"><strong>Work Complete Date:</strong> <span>${machineData.completeWorkDate || 'Not specified'}</span></div>`}
+                  <div class="request-detail"><strong>Selected Service Details:</strong> <span>${Array.isArray(requestData.serviceDetail) ? requestData.serviceDetail.join(', ') : (requestData.serviceDetail || 'None')}</span></div>
+                  <div class="request-detail"><strong>Additional Details:</strong> <span>${requestData.details || 'Not specified'}</span></div>
+                  ${isTransit ? '<div class="request-detail"><strong>Request Type:</strong> <span>Transit Request</span></div>' : ''}
+                </div>
+                <button class="action-btn" onclick="approveStoreKeeper('${requestId}', ${isTransit})">Approve${isTransit ? ' and Assign to Request Viewer' : ' and Forward to Logistic'}</button>
+              </div>
+            `;
+            container.insertAdjacentHTML('beforeend', requestHtml);
+          } catch (e) {
+            console.error('Error parsing pending store keeper approval request:', e);
+          }
+        }
+      }
+      if (container.innerHTML === '') {
+        container.innerHTML = '<p>No requests pending store keeper approval.</p>';
+      }
+    }
+
+    function approveStoreKeeper(requestId, isTransit = false) {
+      const key = `pending_store_keeper_approval_${requestId}`;
+      const dataStr = localStorage.getItem(key);
+      if (!dataStr) {
+        alert('Request data not found.');
+        return;
+      }
+      const data = JSON.parse(dataStr);
+      localStorage.removeItem(key);
+      // Store data for logistic or request-viewer
+      const requestData = JSON.parse(localStorage.getItem(`request_${requestId}`) || '{}');
+      // Set warehouse approval flag and store store keeper's username
+      requestData.warehouseApproved = true;
+      requestData.storeKeeperApprover = localStorage.getItem('username') || 'Store Keeper';
+      // Update the request data with approval
+      localStorage.setItem(`request_${requestId}`, JSON.stringify(requestData));
+
+      if (isTransit) {
+        // For transit requests, assign to request-viewer
+        const viewerUsername = requestData.requesterName; // Creator is the request-viewer
+        localStorage.setItem(`assignment_${requestId}`, viewerUsername);
+        localStorage.setItem(`assigned_viewer_${requestId}`, viewerUsername);
+        alert(`Transit request ${requestData.srNumber} approved by Store Keeper and assigned to Request Viewer: ${viewerUsername}.`);
+      } else {
+        // For regular requests, send to logistic
+        localStorage.setItem('currentRequestId', requestId);
+        localStorage.setItem('requesterData', JSON.stringify(requestData));
+        localStorage.setItem('logisticData', JSON.stringify(data));
+        // Send to logistic
+        localStorage.setItem(`pending_request_${requestId}`, JSON.stringify(requestData));
+        alert(`Request ${requestData.srNumber} approved by Store Keeper and forwarded to Logistic as In-Progress.`);
+      }
+      renderPendingStoreKeeperApprovals();
+      renderSentBackRequests();
+    }
+
+    function logout() {
+      localStorage.removeItem('authenticated');
+      localStorage.removeItem('username');
+      localStorage.removeItem('userRole');
+      window.location.href = 'login.html';
+    }
+  </script>
+</body>
+</html>

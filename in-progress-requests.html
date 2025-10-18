@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>In-Progress Requests - Asiacell LSR Service</title>
+  <style>
+    body { 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+      margin: 0; 
+      padding: 40px; 
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      min-height: 100vh;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      overflow: hidden;
+      border: 1px solid #e9ecef;
+    }
+    
+    header { 
+      background: white;
+      color: #495057;
+      padding: 30px;
+      text-align: center;
+      border-radius: 10px 10px 0 0;
+      border-bottom: 1px solid #e9ecef;
+    }
+    
+    .logo { 
+      font-size: 28px; 
+      font-weight: bold; 
+      color: #dc3545;
+      margin-bottom: 10px;
+    }
+    
+    h2 {
+      margin: 0;
+      font-weight: 300;
+      font-size: 22px;
+    }
+    
+    .content {
+      padding: 30px;
+    }
+    
+    .card { 
+      background: #ffffff; 
+      padding: 25px; 
+      border-radius: 15px; 
+      margin-bottom: 30px; 
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+      border: 1px solid #e0e0e0;
+    }
+    
+    .requests-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+    
+    .request-item {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 10px;
+      border-left: 4px solid #007bff;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 2px solid #e9ecef;
+    }
+    
+    .request-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 123, 255, 0.2);
+      border-color: #007bff;
+    }
+    
+    .request-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #dee2e6;
+    }
+    
+    .sr-number {
+      font-weight: bold;
+      color: #dc3545;
+      font-size: 16px;
+    }
+    
+    .request-date {
+      color: #6c757d;
+      font-size: 14px;
+    }
+    
+    .request-details {
+      margin-bottom: 15px;
+    }
+    
+    .request-detail {
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+    }
+    
+    .request-detail strong {
+      color: #495057;
+      min-width: 120px;
+      font-size: 14px;
+    }
+    
+    .request-detail span {
+      color: #495057;
+      font-size: 14px;
+    }
+    
+    .status-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    
+    .status-in-progress {
+      background: #cce5ff;
+      color: #004085;
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #6c757d;
+    }
+    
+    .empty-state h3 {
+      color: #495057;
+      margin-bottom: 10px;
+    }
+    
+    .empty-state p {
+      margin-bottom: 20px;
+    }
+    
+    .back-btn {
+      display: inline-block;
+      padding: 12px 24px;
+      background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    
+    .back-btn:hover {
+      background: linear-gradient(135deg, #495057 0%, #343a40 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(108, 117, 125, 0.4);
+    }
+    
+    .action-btn {
+      display: inline-block;
+      padding: 12px 24px;
+      background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      margin-left: 10px;
+    }
+    
+    .action-btn:hover {
+      background: linear-gradient(135deg, #0056b3 0%, #004085 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
+    }
+    
+    h3 { 
+      color: #495057;
+      border-bottom: 3px solid #007bff; 
+      padding-bottom: 10px; 
+      margin-top: 0;
+      font-size: 20px;
+    }
+    
+    @media (max-width: 768px) {
+      body {
+        padding: 20px;
+      }
+      
+      .requests-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .content {
+        padding: 20px;
+      }
+      
+      .request-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">Asiacell LSR Service</div>
+      <h2>In-Progress Service Requests</h2>
+    </header>
+
+    <div class="content">
+    <div class="card">
+      <h3>Requests Awaiting Logistic Processing</h3>
+      <div style="margin-bottom: 20px;">
+        <input type="text" id="searchInput" placeholder="Search by SR Number..." style="width: 100%; padding: 12px; border: 2px solid #dee2e6; border-radius: 6px; font-size: 14px;">
+      </div>
+      <div id="inProgressRequestsList" class="requests-grid">
+        <!-- In-progress requests will be dynamically populated here -->
+      </div>
+    </div>
+    </div>
+  </div>
+
+  <script>
+    // Check authentication and supervisor role
+    if (localStorage.getItem('authenticated') !== 'true' || localStorage.getItem('userRole') !== 'supervisor') {
+      window.location.href = 'login.html';
+    }
+    
+    // Function to get all in-progress requests (requests without logistic data)
+    function getInProgressRequests() {
+      const inProgressRequests = [];
+
+      console.log('DEBUG: Total localStorage keys:', localStorage.length);
+
+      // Check localStorage for stored requests
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key.startsWith('request_')) {
+          console.log('DEBUG: Found request key:', key);
+          try {
+            const requestData = JSON.parse(localStorage.getItem(key));
+            const requestId = key.replace('request_', '');
+
+            console.log('DEBUG: Request ID:', requestId, 'SR Number:', requestData.srNumber);
+
+            // Check if this request is in-progress (no logistic data or sent-back logistic data)
+            const logisticDataStr = localStorage.getItem(`logistic_${requestId}`);
+            const hasLogisticData = !!logisticDataStr;
+            console.log('DEBUG: Has logistic data:', hasLogisticData);
+
+            let isInProgress = false;
+            let logisticData = null;
+
+            if (!hasLogisticData) {
+              isInProgress = true;
+            } else {
+              try {
+                logisticData = JSON.parse(logisticDataStr);
+                if (logisticData.status === 'sent-back-logistic') {
+                  isInProgress = true;
+                }
+              } catch (e) {
+                console.error('Error parsing logistic data:', e);
+              }
+            }
+
+            if (isInProgress) {
+              // Check if it has machine data (created in request-viewer)
+              const machineDataStr = localStorage.getItem(`machine_${requestId}`);
+              console.log('DEBUG: Has machine data:', !!machineDataStr);
+
+              if (machineDataStr) {
+                const machineData = JSON.parse(machineDataStr);
+                console.log('DEBUG: Machine data status:', machineData.status);
+
+                console.log('DEBUG: Adding request to in-progress list');
+                inProgressRequests.push({
+                  id: requestId,
+                  ...requestData,
+                  machineData: machineData,
+                  logisticData: logisticData
+                });
+              } else {
+                console.log('DEBUG: No machine data, skipping');
+              }
+            } else {
+              console.log('DEBUG: Has completed logistic data, skipping');
+            }
+          } catch (e) {
+            console.error('Error parsing request data:', e);
+          }
+        }
+      }
+
+      console.log('DEBUG: Final in-progress requests count:', inProgressRequests.length);
+
+      return inProgressRequests.sort((a, b) => new Date(b.requestDate || 0) - new Date(a.requestDate || 0));
+    }
+
+    function filterRequests() {
+      const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+      renderInProgressRequests(searchTerm);
+    }
+
+    // Function to render in-progress requests as a comprehensive list
+    function renderInProgressRequests(searchTerm = '') {
+      console.log('DEBUG: Rendering in-progress requests with searchTerm:', searchTerm);
+      const inProgressRequests = getInProgressRequests();
+      console.log('DEBUG: In-progress requests from getInProgressRequests:', inProgressRequests.length);
+      const container = document.getElementById('inProgressRequestsList');
+
+      if (inProgressRequests.length === 0) {
+        console.log('DEBUG: No in-progress requests found');
+        container.innerHTML = `
+          <div class="empty-state">
+            <h3>No In-Progress Requests Found</h3>
+            <p>There are no service requests awaiting logistic processing.</p>
+            <a href="request-viewer.html" class="back-btn">← Back to Request Viewer</a>
+            <a href="completed-requests.html" class="action-btn">View Completed Requests →</a>
+          </div>
+        `;
+        return;
+      }
+
+      // Filter requests by search term
+      const filteredRequests = inProgressRequests.filter(request => {
+        const srNumber = (request.srNumber || '').toLowerCase();
+        const matches = !searchTerm || srNumber.includes(searchTerm);
+        console.log('DEBUG: Request', request.srNumber, 'matches search:', matches);
+        return matches;
+      });
+
+      console.log('DEBUG: Filtered requests count:', filteredRequests.length);
+
+      container.innerHTML = filteredRequests.map(request => {
+        console.log('DEBUG: Rendering request:', request.srNumber, request.id);
+        const requestDate = request.requestDate ? new Date(request.requestDate).toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        }) : 'Not specified';
+
+        const completeDate = request.machineData.completeWorkDate ? new Date(request.machineData.completeWorkDate).toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        }) : 'Not specified';
+
+        // Determine if this is a sent-back request
+        const isSentBack = request.logisticData && request.logisticData.status === 'sent-back-logistic';
+        const statusText = isSentBack ? 'Sent Back' : 'In Progress';
+        const statusClass = isSentBack ? 'status-sent-back' : 'status-in-progress';
+
+        // Calculate total price - use logistic data if available (for sent-back), otherwise calculate from machine data
+        let totalPrice = 0;
+        let machinesList = 'No machines specified';
+
+        if (isSentBack && request.logisticData.machines && Array.isArray(request.logisticData.machines)) {
+          console.log('DEBUG: Using logistic machines data for sent-back request', request.srNumber);
+          totalPrice = request.logisticData.totalPrice || 0;
+          machinesList = request.logisticData.machines.map(m =>
+            `${m.count}x ${m.machine} for ${m.days} day(s)`
+          ).join(', ');
+        } else if (request.machineData.machines && Array.isArray(request.machineData.machines)) {
+          console.log('DEBUG: Calculating price from machine data for', request.srNumber);
+          // Calculate total price using hardcoded prices for in-progress
+          const prices = {
+            crane: 142000,
+            worker: 25000,
+            tadano: 250000
+          };
+          totalPrice = request.machineData.machines.reduce((sum, m) => {
+            return sum + (prices[m.machine] * m.count * m.days);
+          }, 0);
+
+          // Format machines list
+          machinesList = request.machineData.machines.map(m =>
+            `${m.count}x ${m.machine} for ${m.days} day(s)`
+          ).join(', ');
+        } else {
+          console.log('DEBUG: Machines array missing or not array for', request.srNumber);
+        }
+
+        return `
+          <div class="request-item" onclick="continueRequest('${request.id}')">
+            <div class="request-header">
+              <div class="sr-number">${request.srNumber || 'SR-N/A'}</div>
+              <div class="status-badge ${statusClass}">${statusText}</div>
+            </div>
+
+            <div class="request-details">
+              <div class="request-detail">
+                <strong>SR Number:</strong>
+                <span>${request.srNumber || 'Not specified'}</span>
+              </div>
+
+              <div class="request-detail">
+                <strong>Department:</strong>
+                <span>${request.department || 'Not specified'}</span>
+              </div>
+
+              <div class="request-detail">
+                <strong>Requester:</strong>
+                <span>${request.requesterName || 'Not specified'}</span>
+              </div>
+
+              <div class="request-detail">
+                <strong>Chief:</strong>
+                <span>${request.chiefName || 'Not specified'}</span>
+              </div>
+
+              <div class="request-detail">
+                <strong>Request Date:</strong>
+                <span>${requestDate}</span>
+              </div>
+
+              <div class="request-detail">
+                <strong>Complete Date:</strong>
+                <span>${completeDate}</span>
+              </div>
+
+              <div class="request-detail">
+                <strong>Base Price:</strong>
+                <span>${totalPrice.toLocaleString()} IQD</span>
+              </div>
+
+              <div class="request-detail">
+                <strong>Return Price (30%):</strong>
+                <span>${(totalPrice * 1.3).toLocaleString()} IQD</span>
+              </div>
+
+              <div class="request-detail">
+                <strong>Machines:</strong>
+                <span>${(request.machineData.machines && Array.isArray(request.machineData.machines)) ? request.machineData.machines.length : 0} machine(s)</span>
+              </div>
+
+              <div class="request-detail">
+                <strong>Machine Details:</strong>
+                <span>${machinesList || 'No machines specified'}</span>
+              </div>
+
+            </div>
+
+            <div class="request-date">
+              Click to continue logistic processing
+            </div>
+          </div>
+        `;
+      }).join('');
+      
+      // Add navigation buttons
+      container.innerHTML += `
+        <div style="grid-column: 1 / -1; text-align: center; margin-top: 30px;">
+          <a href="request-viewer.html" class="back-btn" style="background: linear-gradient(135deg, #6c757d 0%, #495057 100%); margin: 0 10px;">← Back to Request Viewer</a>
+          <a href="completed-requests.html" class="action-btn" style="background: linear-gradient(135deg, #28a745 0%, #218838 100%); margin: 0 10px;">View Completed Requests →</a>
+          <a href="requests.html" class="action-btn" style="background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); margin: 0 10px; display:none;">View All Requests →</a>
+        </div>
+      `;
+    }
+
+    // Function to continue processing a request (navigate to logistic form)
+    function continueRequest(requestId) {
+      // Load the stored request data and machine data
+      const requestData = JSON.parse(localStorage.getItem(`request_${requestId}`));
+      const machineData = JSON.parse(localStorage.getItem(`machine_${requestId}`));
+      
+      // Store the current request data for the logistic page
+      localStorage.setItem('currentRequestId', requestId);
+      localStorage.setItem('requesterData', JSON.stringify(requestData));
+      localStorage.setItem('machineData', JSON.stringify(machineData));
+      
+      // Navigate to logistic form
+      window.location.href = 'logistic.html';
+    }
+
+    // Initialize the page
+    document.addEventListener('DOMContentLoaded', () => {
+      renderInProgressRequests('');
+
+      // Add search functionality
+      const searchInput = document.getElementById('searchInput');
+      searchInput.addEventListener('input', function() {
+        renderInProgressRequests(this.value.trim());
+      });
+
+      // Update local storage data every 3 seconds
+      setInterval(() => {
+        renderInProgressRequests('');
+      }, 3000);
+    });
+  </script>
+</body>
+</html>

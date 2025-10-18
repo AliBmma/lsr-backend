@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Logistic supervisor Dashboard - Asiacell LSR Service</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 40px;
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      min-height: 100vh;
+    }
+    .auth-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding: 15px 20px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      border-left: 4px solid #dc3545;
+    }
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .welcome-text {
+      font-size: 14px;
+      color: #495057;
+    }
+    .logout-btn {
+      padding: 8px 16px;
+      background: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+    .logout-btn:hover {
+      background: #c82333;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      overflow: hidden;
+      border: 1px solid #e9ecef;
+    }
+    header {
+      background: white;
+      color: #495057;
+      padding: 30px;
+      text-align: center;
+      border-radius: 10px 10px 0 0;
+      border-bottom: 1px solid #e9ecef;
+    }
+    .logo {
+      font-size: 28px;
+      font-weight: bold;
+      color: #dc3545;
+      margin-bottom: 10px;
+    }
+    h2 {
+      margin: 0;
+      font-weight: 300;
+      font-size: 22px;
+    }
+    .content {
+      padding: 30px;
+    }
+    .card {
+      background: #ffffff;
+      padding: 25px;
+      border-radius: 15px;
+      margin-bottom: 30px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+      border: 1px solid #e0e0e0;
+    }
+    .requests-list {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      margin-top: 20px;
+    }
+    .request-item {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 10px;
+      border-left: 4px solid #dc3545;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 2px solid #e9ecef;
+    }
+    .request-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(220, 53, 69, 0.2);
+      border-color: #dc3545;
+    }
+    .request-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #dee2e6;
+    }
+    .sr-number {
+      font-weight: bold;
+      color: #dc3545;
+      font-size: 16px;
+    }
+    .request-date {
+      color: #6c757d;
+      font-size: 14px;
+    }
+    .request-details {
+      margin-bottom: 15px;
+    }
+    .request-detail {
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+    }
+    .request-detail strong {
+      color: #495057;
+      min-width: 120px;
+      font-size: 14px;
+    }
+    .request-detail span {
+      color: #495057;
+      font-size: 14px;
+    }
+    .status-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .status-pending {
+      background: #fff3cd;
+      color: #856404;
+    }
+    .status-in-progress {
+      background: #cce5ff;
+      color: #004085;
+    }
+    .status-completed {
+      background: #d4edda;
+      color: #155724;
+    }
+    .status-sent-back {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    .status-transit {
+      background: #17a2b8;
+      color: white;
+    }
+    .assign-btn {
+      margin-top: 10px;
+      padding: 8px 16px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.3s ease;
+    }
+    .assign-btn:hover {
+      background: #0056b3;
+    }
+    .assign-section {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-top: 10px;
+    }
+    .viewer-select {
+      padding: 8px;
+      border: 2px solid #dee2e6;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    .assigned-requests {
+      margin-top: 30px;
+    }
+    .assigned-item {
+      background: #e9ecef;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      border-left: 4px solid #28a745;
+    }
+    .sent-back-requests {
+      margin-top: 30px;
+    }
+    .sent-back-item {
+      background: #fff3cd;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      border-left: 4px solid #ffc107;
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-header">
+    <div class="logo">Asiacell LSR Service</div>
+    <div class="user-info">
+      <span class="welcome-text" id="welcomeText">Welcome, </span>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+  </div>
+  <div class="container">
+    <header>
+      <div class="logo">Asiacell LSR Service</div>
+      <h2>Logistic Supervisor Dashboard</h2>
+    </header>
+    <div class="content">
+      <div class="card">
+        <h3>Pending Requests from Requesters</h3>
+        <div style="margin-bottom: 20px;">
+          <input type="text" id="searchInput" placeholder="Search by SR Number..." style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px;">
+        </div>
+        <div id="pendingRequestsList" class="requests-list">
+          <!-- Pending requests will be dynamically populated here -->
+        </div>
+      </div>
+      <div class="card assigned-requests">
+        <h3>Requests Assigned by Me</h3>
+        <div id="assignedRequestsList">
+          <!-- Assigned requests will be dynamically populated here -->
+        </div>
+      </div>
+
+
+
+      <div class="card">
+        <h3>Regular Requests Pending Work Completion Approval</h3>
+        <div id="workCompletionRequestsList" class="requests-list">
+          <!-- Regular work completion approval requests will be dynamically populated here -->
+        </div>
+      </div>
+
+      <div class="card sent-back-requests">
+        <h3>Requests Sent Back to Requesters</h3>
+        <div id="sentBackRequestsList">
+          <!-- Sent back requests will be dynamically populated here -->
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Send Request Back to Requester</h3>
+        <p>Select a request and add a note to send it back to the requester for modifications.</p>
+
+        <div style="margin-bottom: 20px;">
+          <label style="font-weight: 600; color: #495057;">Select Request to Send Back:</label>
+          <select id="sendBackRequestSelect" style="width: 100%; padding: 10px; border: 2px solid #dee2e6; border-radius: 6px; margin-top: 5px;">
+            <option value="">-- Choose Request --</option>
+          </select>
+        </div>
+
+        <div style="margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #ffc107;">
+          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
+            <input type="checkbox" id="addNoteCheckbox" onchange="toggleNoteField()" style="width: 18px; height: 18px; cursor: pointer;">
+            <label for="addNoteCheckbox" style="font-weight: 600; color: #495057; cursor: pointer; font-size: 16px;">
+              📝 Add Note to Requester
+            </label>
+          </div>
+
+          <div id="noteField" style="display: none; margin: 15px 0;">
+            <label style="font-weight: 600; color: #495057;">Note to Requester:</label>
+            <textarea id="requesterNote" placeholder="Add a note explaining what changes are needed..." rows="3" style="margin-top: 8px; width: 100%; padding: 8px; border: 2px solid #dee2e6; border-radius: 6px; font-size: 14px;"></textarea>
+
+            <button type="button" onclick="sendBackToRequester()" style="background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%); margin-top: 15px; padding: 12px 24px; border: none; border-radius: 6px; color: white; font-weight: 600; cursor: pointer; transition: all 0.3s ease;">
+              📤 Send Back to Requester
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const isAuthenticated = localStorage.getItem('authenticated') === 'true';
+      const username = localStorage.getItem('username');
+      const userRole = localStorage.getItem('userRole');
+      if (!isAuthenticated || !username || userRole !== 'logistic-control') {
+        localStorage.removeItem('authenticated');
+        localStorage.removeItem('username');
+        localStorage.removeItem('userRole');
+        window.location.href = 'login.html';
+        return;
+      }
+      document.getElementById('welcomeText').textContent = 'Welcome, ' + username;
+      renderPendingRequests('');
+      // Add search functionality
+      const searchInput = document.getElementById('searchInput');
+      searchInput.addEventListener('input', function() {
+        renderPendingRequests(this.value.trim());
+      });
+      renderAssignedRequests();
+      renderWorkCompletionRequests();
+      renderSentBackRequests();
+      // Populate send back requests dropdown
+      populateSendBackRequests();
+      // Removed setInterval to prevent automatic refresh
+      // setInterval(() => {
+      //   // Filter out requests that are sent-back to request-viewer, so chief approval is skipped
+      //   renderPendingRequests('');
+      //   renderAssignedRequests();
+      // }, 3000);
+    });
+    function renderAssignedRequests() {
+      const container = document.getElementById('assignedRequestsList');
+      container.innerHTML = '';
+      const assignedRequests = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key.startsWith('assignment_')) {
+          const requestId = key.replace('assignment_', '');
+          const viewerUsername = localStorage.getItem(`assigned_viewer_${requestId}`);
+          const requestDataStr = localStorage.getItem(`request_${requestId}`);
+          if (requestDataStr) {
+            try {
+              const requestData = JSON.parse(requestDataStr);
+              assignedRequests.push({ id: requestId, viewer: viewerUsername, ...requestData });
+            } catch (e) {
+              console.error('Error parsing assigned request:', e);
+            }
+          }
+        }
+      }
+      if (assignedRequests.length === 0) {
+        container.innerHTML = '<p>No requests assigned yet.</p>';
+        return;
+      }
+      assignedRequests.forEach(request => {
+        const assignedHtml = `
+          <div class="assigned-item">
+            <strong>${request.srNumber || 'SR-N/A'}</strong> - Assigned to: ${request.viewer} (Requester: ${request.requesterName || 'Unknown'})
+            <button class="assign-btn" style="margin-left: 10px;" onclick="unassignRequest('${request.id}')">Unassign</button>
+          </div>
+        `;
+        container.insertAdjacentHTML('beforeend', assignedHtml);
+      });
+    }
+
+
+
+    function renderWorkCompletionRequests() {
+      const container = document.getElementById('workCompletionRequestsList');
+      container.innerHTML = '';
+      const workCompletionRequests = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key.startsWith('pending_request_')) {
+          try {
+            const requestData = JSON.parse(localStorage.getItem(key));
+            const requestId = key.replace('pending_request_', '');
+            // Check if this is a regular (non-transit) request pending work completion approval
+            if (requestData.isTransit) {
+              continue; // Skip transit requests - they go to the other section
+            }
+            const machineData = JSON.parse(localStorage.getItem(`machine_${requestId}`) || '{}');
+            if (machineData && machineData.status === 'completion_approved') {
+              // Already approved, skip
+              continue;
+            }
+            // Only show requests that have been work approved but not completion approved
+            if (machineData.status !== 'work_approved') {
+              continue;
+            }
+            // Only show requests that are not assigned yet (no assignment key)
+            if (!localStorage.getItem(`assignment_${requestId}`)) {
+              workCompletionRequests.push({ id: requestId, ...requestData, machineData });
+            }
+          } catch (e) {
+            console.error('Error parsing work completion request:', e);
+          }
+        }
+      }
+      if (workCompletionRequests.length === 0) {
+        container.innerHTML = '<p>No regular requests pending work completion approval.</p>';
+        return;
+      }
+      workCompletionRequests.forEach(request => {
+        const requestType = 'Regular Request';
+        const requestTypeClass = 'status-pending';
+        const requestHtml = `
+          <div class="request-item" id="work-completion-request-${request.id}">
+            <div class="request-header">
+              <div class="sr-number">${request.srNumber || 'SR-N/A'}</div>
+              <div class="status-badge ${requestTypeClass}">${requestType}</div>
+            </div>
+            <div class="request-details">
+              <div class="request-detail"><strong>Department:</strong> <span>${request.department || 'Not specified'}</span></div>
+              <div class="request-detail"><strong>Requester:</strong> <span>${request.requesterName || 'Not specified'}</span></div>
+              <div class="request-detail"><strong>Manager:</strong> <span>${request.chiefName || 'Not specified'}</span></div>
+              <div class="request-detail"><strong>Request Date:</strong> <span>${request.requestDate || 'Not specified'}</span></div>
+              <div class="request-detail"><strong>Selected Service Details:</strong> <span>${Array.isArray(request.serviceDetail) ? request.serviceDetail.join(', ') : (request.serviceDetail || 'None')}</span></div>
+              <div class="request-detail"><strong>Additional Details:</strong> <span>${request.details || 'Not specified'}</span></div>
+            </div>
+            <div class="assign-section">
+              <button class="assign-btn" onclick="approveWorkCompletion('${request.id}', '${request.requesterName}')">Approve Work Completion</button>
+            </div>
+          </div>
+        `;
+        container.insertAdjacentHTML('beforeend', requestHtml);
+      });
+    }
+    function renderPendingRequests() {
+      const container = document.getElementById('pendingRequestsList');
+      container.innerHTML = '';
+      const pendingRequests = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key.startsWith('pending_request_')) {
+          try {
+            const requestData = JSON.parse(localStorage.getItem(key));
+            pendingRequests.push({ id: key.replace('pending_request_', ''), ...requestData });
+          } catch (e) {
+            console.error('Error parsing pending request:', e);
+          }
+        }
+      }
+      if (pendingRequests.length === 0) {
+        container.innerHTML = '<p>No pending requests from requesters.</p>';
+        return;
+      }
+      pendingRequests.forEach(request => {
+        const assignedTo = localStorage.getItem(`assignment_${request.id}`) || 'Unassigned';
+        const isTransit = request.isTransit;
+        const requestType = isTransit ? 'Pending' : 'Pending';
+        const requestTypeClass = isTransit ? 'status-in-progress' : 'status-pending';
+        const transitLabel = isTransit ? ' <span class="status-badge status-transit">Transit</span>' : '';
+        const requestHtml = `
+          <div class="request-item" id="request-${request.id}">
+            <div class="request-header">
+              <div class="sr-number">${request.srNumber || 'SR-N/A'}</div>
+              <div class="status-badge ${requestTypeClass}">${requestType}${transitLabel}</div>
+            </div>
+            <div class="request-details">
+              <div class="request-detail"><strong>Department:</strong> <span>${request.department || 'Not specified'}</span></div>
+              <div class="request-detail"><strong>Requester:</strong> <span>${request.requesterName || 'Not specified'}</span></div>
+              <div class="request-detail"><strong>Manager:</strong> <span>${request.chiefName || 'Not specified'}</span></div>
+              <div class="request-detail"><strong>Request Date:</strong> <span>${request.requestDate || 'Not specified'}</span></div>
+              <div class="request-detail"><strong>Selected Service Details:</strong> <span>${Array.isArray(request.serviceDetail) ? request.serviceDetail.join(', ') : (request.serviceDetail || 'None')}</span></div>
+              <div class="request-detail"><strong>Additional Details:</strong> <span>${request.details || 'Not specified'}</span></div>
+            </div>
+            <div class="assign-section">
+              ${isTransit ?
+                `<button class="assign-btn" onclick="approveTransitRequest('${request.id}', '${request.requesterName}')">Approve & Assign to Creator</button>` :
+                `<select id="viewerSelect-${request.id}" class="viewer-select">
+                  <option value="">Select Logistic Officer</option>
+                  <option value="laith.talib">laith.talib</option>
+                  <option value="mustafa.ismael">mustafa.ismael</option>
+                  <option value="mustafa.munaf">mustafa.munaf</option>
+                  <option value="abdulrahman.mazin">abdulrahman.mazin</option>
+                  <option value="yasir.fri">yasir.fri</option>
+                </select>
+                <button class="assign-btn" onclick="assignToRequestViewer('${request.id}')">Assign</button>`
+              }
+            </div>
+          </div>
+        `;
+        container.insertAdjacentHTML('beforeend', requestHtml);
+      });
+    }
+    function renderSentBackRequests() {
+      const container = document.getElementById('sentBackRequestsList');
+      container.innerHTML = '';
+      const sentBackRequests = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key.startsWith('sent_back_')) {
+          try {
+            const requestData = JSON.parse(localStorage.getItem(key));
+            const requestId = key.replace('sent_back_', '');
+            const machineData = JSON.parse(localStorage.getItem(`machine_${requestId}`) || '{}');
+            sentBackRequests.push({ id: requestId, ...requestData, machineData: machineData });
+          } catch (e) {
+            console.error('Error parsing sent back request:', e);
+          }
+        }
+      }
+      if (sentBackRequests.length === 0) {
+        container.innerHTML = '<p>No requests sent back to requesters.</p>';
+        return;
+      }
+      sentBackRequests.forEach(request => {
+        const sentBackHtml = `
+          <div class="sent-back-item">
+            <strong>${request.srNumber || 'SR-N/A'}</strong> - Sent back to: ${request.requesterName || 'Unknown'}
+            <div style="margin-top: 10px; font-size: 12px; color: #856404;">
+              <strong>Note:</strong> ${request.machineData.requesterNote || 'No note provided'}
+            </div>
+            <div style="margin-top: 5px; font-size: 11px; color: #6c757d;">
+              Sent back on: ${new Date(request.machineData.sentBackDate).toLocaleDateString()}
+            </div>
+          </div>
+        `;
+        container.insertAdjacentHTML('beforeend', sentBackHtml);
+      });
+    }
+    function assignToRequestViewer(requestId) {
+      const requestKey = `pending_request_${requestId}`;
+      const requestDataStr = localStorage.getItem(requestKey);
+      if (!requestDataStr) {
+        alert('Request data not found.');
+        return;
+      }
+      const requestData = JSON.parse(requestDataStr);
+      // Get selected viewer from select
+      const viewerSelect = document.getElementById(`viewerSelect-${requestId}`);
+      const viewerUsername = viewerSelect.value;
+      if (!viewerUsername) {
+        alert('Please select a Request Viewer.');
+        return;
+      }
+      // Save the request as a normal request for request viewer
+      localStorage.setItem(`request_${requestId}`, JSON.stringify(requestData));
+      // Save assignment info
+      localStorage.setItem(`assignment_${requestId}`, viewerUsername);
+      localStorage.setItem(`assigned_viewer_${requestId}`, viewerUsername);
+      // Remove from pending requests
+      localStorage.removeItem(requestKey);
+      alert(`Request ${requestData.srNumber} assigned to Logistic Officer: ${viewerUsername}.`);
+      renderPendingRequests();
+      renderAssignedRequests();
+    }
+
+    function approveTransitRequest(requestId, creatorUsername) {
+      const requestKey = `pending_request_${requestId}`;
+      const requestDataStr = localStorage.getItem(requestKey);
+      if (!requestDataStr) {
+        alert('Request data not found.');
+        return;
+      }
+      const requestData = JSON.parse(requestDataStr);
+
+      // Check if warehouse approval is required
+      if (requestData.warehouseOfficerNeeded) {
+        // Send to store keeper for approval
+        localStorage.setItem(`pending_store_keeper_approval_${requestId}`, JSON.stringify(requestData));
+        localStorage.removeItem(requestKey);
+        alert(`Transit request ${requestData.srNumber} requires warehouse approval and has been sent to Store Keeper.`);
+      } else {
+        // For transit requests without warehouse requirement, assign back to the creator (who is a request-viewer)
+        const viewerUsername = creatorUsername;
+
+        // Save the request as a normal request for request viewer
+        localStorage.setItem(`request_${requestId}`, JSON.stringify(requestData));
+        // Save assignment info
+        localStorage.setItem(`assignment_${requestId}`, viewerUsername);
+        localStorage.setItem(`assigned_viewer_${requestId}`, viewerUsername);
+        // Remove from pending requests
+        localStorage.removeItem(requestKey);
+
+        alert(`Transit request ${requestData.srNumber} approved and assigned back to Logistic Officer: ${viewerUsername}.`);
+      }
+      renderPendingRequests();
+      renderAssignedRequests();
+    }
+
+
+
+    function approveWorkCompletion(requestId, creatorUsername) {
+      const requestKey = `pending_request_${requestId}`;
+      const requestDataStr = localStorage.getItem(requestKey);
+      if (!requestDataStr) {
+        alert('Request data not found.');
+        return;
+      }
+      const requestData = JSON.parse(requestDataStr);
+
+      // Update machine data status to completion_approved
+      const machineData = JSON.parse(localStorage.getItem(`machine_${requestId}`) || '{}');
+      machineData.status = 'completion_approved';
+      machineData.completionApprovedAt = new Date().toISOString();
+      localStorage.setItem(`machine_${requestId}`, JSON.stringify(machineData));
+
+      // Assign to creator (request-viewer) for work completion approval
+      const viewerUsername = creatorUsername;
+
+      // Save the request as a normal request for request viewer
+      localStorage.setItem(`request_${requestId}`, JSON.stringify(requestData));
+      // Save assignment info
+      localStorage.setItem(`assignment_${requestId}`, viewerUsername);
+      localStorage.setItem(`assigned_viewer_${requestId}`, viewerUsername);
+      // Remove from pending requests
+      localStorage.removeItem(requestKey);
+
+      alert(`Work completion for request ${requestData.srNumber} approved and assigned to Logistic Officer: ${viewerUsername}.`);
+      renderPendingRequests();
+      renderAssignedRequests();
+      renderTransitWorkCompletionRequests();
+      renderWorkCompletionRequests();
+    }
+
+    function unassignRequest(requestId) {
+      const requestKey = `request_${requestId}`;
+      const requestDataStr = localStorage.getItem(requestKey);
+      if (!requestDataStr) {
+        alert('Request data not found.');
+        return;
+      }
+      const requestData = JSON.parse(requestDataStr);
+      // Move back to pending requests
+      localStorage.setItem(`pending_request_${requestId}`, JSON.stringify(requestData));
+      // Remove from assigned requests
+      localStorage.removeItem(requestKey);
+      localStorage.removeItem(`assignment_${requestId}`);
+      localStorage.removeItem(`assigned_viewer_${requestId}`);
+      alert(`Request ${requestData.srNumber} unassigned and moved back to pending.`);
+      renderPendingRequests();
+      renderAssignedRequests();
+    }
+
+    // Function to toggle note field visibility
+    function toggleNoteField() {
+      const noteField = document.getElementById('noteField');
+      const checkbox = document.getElementById('addNoteCheckbox');
+      noteField.style.display = checkbox.checked ? 'block' : 'none';
+    }
+
+    // Function to populate send back request select
+    function populateSendBackRequests() {
+      const select = document.getElementById('sendBackRequestSelect');
+      select.innerHTML = '<option value="">-- Choose Request --</option>';
+
+      // Get all requests from localStorage (both pending and assigned)
+      const requests = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+
+        // Check for both pending_request_ and request_ prefixes
+        if (key.startsWith('pending_request_') || key.startsWith('request_')) {
+          try {
+            const requestData = JSON.parse(localStorage.getItem(key));
+            const requestId = key.replace('pending_request_', '').replace('request_', '');
+
+            // Avoid duplicates by checking if we already have this request
+            const existingRequest = requests.find(r => r.id === requestId);
+            if (!existingRequest) {
+              requests.push({
+                id: requestId,
+                ...requestData
+              });
+            }
+          } catch (e) {
+            console.error('Error parsing request:', e);
+          }
+        }
+      }
+
+      // Sort by date (newest first)
+      requests.sort((a, b) => new Date(b.requestDate || 0) - new Date(a.requestDate || 0));
+
+      // Add options to select
+      requests.forEach(request => {
+        const option = document.createElement('option');
+        option.value = request.id;
+        option.textContent = `${request.srNumber || 'N/A'} - ${request.requesterName || 'N/A'} - ${request.department || 'N/A'}`;
+        select.appendChild(option);
+      });
+
+      // Debug: Log available requests
+      console.log('Available requests for send-back:', requests);
+    }
+
+    // Function to send request back to requester
+    function sendBackToRequester() {
+      const requestSelect = document.getElementById('sendBackRequestSelect');
+      const addNoteCheckbox = document.getElementById('addNoteCheckbox');
+      const requesterNote = document.getElementById('requesterNote').value;
+
+      const requestId = requestSelect.value;
+
+      if (!requestId) {
+        alert('Please select a request to send back.');
+        return;
+      }
+
+      if (!addNoteCheckbox.checked || requesterNote.trim() === '') {
+        alert('Please add a note before sending back to requester.');
+        return;
+      }
+
+      // Get request data from either pending_request_ or request_ location
+      let requestData = JSON.parse(localStorage.getItem(`request_${requestId}`) || '{}');
+      if (!requestData.srNumber) {
+        requestData = JSON.parse(localStorage.getItem(`pending_request_${requestId}`) || '{}');
+      }
+
+      if (!requestData.srNumber) {
+        alert('Request data not found or invalid.');
+        return;
+      }
+
+      // Create machine data with the note
+      const machineData = {
+        requesterNote: requesterNote,
+        status: 'sent-to-requester',
+        sentBackBy: 'logistic-control',
+        sentBackDate: new Date().toISOString()
+      };
+
+      // Save machine data with consistent ID
+      localStorage.setItem(`machine_${requestId}`, JSON.stringify(machineData));
+
+      // Store the sent-back request in a separate location for tracking
+      localStorage.setItem(`sent_back_${requestId}`, JSON.stringify(requestData));
+
+      // Keep the request in the main location so requester can still see it
+      localStorage.setItem(`request_${requestId}`, JSON.stringify(requestData));
+
+      // Remove from pending requests if it exists there
+      localStorage.removeItem(`pending_request_${requestId}`);
+
+      // Remove assignment info if it exists
+      localStorage.removeItem(`assignment_${requestId}`);
+      localStorage.removeItem(`assigned_viewer_${requestId}`);
+
+      // Show confirmation
+      alert(`Request ${requestData.srNumber} has been sent back to the requester with your note! The requester will see it in their dashboard.`);
+
+      // Clear form
+      requestSelect.value = '';
+      document.getElementById('addNoteCheckbox').checked = false;
+      document.getElementById('requesterNote').value = '';
+      toggleNoteField();
+
+      // Refresh the page to update any displays
+      location.reload();
+    }
+
+    function logout() {
+      localStorage.removeItem('authenticated');
+      localStorage.removeItem('username');
+      localStorage.removeItem('userRole');
+      window.location.href = 'login.html';
+    }
+  </script>
+</body>
+</html>

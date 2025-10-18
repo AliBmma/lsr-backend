@@ -1,0 +1,1525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Logistic Officer - Add Machines - Asiacell LSR Service</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <style>
+    body { 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+      margin: 0; 
+      padding: 40px; 
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      min-height: 100vh;
+    }
+    
+    .auth-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding: 15px 20px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      border-left: 4px solid #dc3545;
+    }
+    
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    
+    .welcome-text {
+      font-size: 14px;
+      color: #495057;
+    }
+    
+    .logout-btn {
+      padding: 8px 16px;
+      background: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+    
+    .logout-btn:hover {
+      background: #c82333;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      overflow: hidden;
+      border: 1px solid #e9ecef;
+    }
+    
+    header { 
+      background: white;
+      color: #495057;
+      padding: 30px;
+      text-align: center;
+      border-radius: 10px 10px 0 0;
+      border-bottom: 1px solid #e9ecef;
+    }
+    
+    .logo { 
+      font-size: 28px; 
+      font-weight: bold; 
+      color: #dc3545;
+      margin-bottom: 10px;
+    }
+    
+    h2 {
+      margin: 0;
+      font-weight: 300;
+      font-size: 22px;
+    }
+    
+    .content {
+      padding: 30px;
+    }
+    
+    .card { 
+      background: #ffffff; 
+      padding: 25px; 
+      border-radius: 15px; 
+      margin-bottom: 30px; 
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+      border: 1px solid #e0e0e0;
+    }
+    
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+    
+    .info-item {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 10px;
+      border-left: 4px solid #dc3545;
+    }
+    
+    .info-item strong {
+      color: #495057;
+      display: block;
+      margin-bottom: 5px;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .info-item p {
+      margin: 0;
+      color: #495057;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+    
+    .description-area {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 10px;
+      border-left: 4px solid #dc3545;
+      margin-top: 20px;
+    }
+    
+    .description-area strong {
+      color: #495057;
+      display: block;
+      margin-bottom: 10px;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .description-area p {
+      margin: 0;
+      color: #2c3e50;
+      font-size: 16px;
+      line-height: 1.6;
+      min-height: 60px;
+    }
+    
+    h3 { 
+      color: #495057;
+      border-bottom: 3px solid #dc3545; 
+      padding-bottom: 10px; 
+      margin-top: 0;
+      font-size: 20px;
+    }
+    
+    form { 
+      max-width: 100%; 
+      margin: auto; 
+    }
+    
+    label { 
+      display: block; 
+      margin-top: 15px; 
+      font-weight: 600;
+      color: #495057;
+      font-size: 14px;
+    }
+    
+    select, input, textarea { 
+      width: 100%; 
+      padding: 12px; 
+      margin-top: 8px; 
+      border: 2px solid #dee2e6;
+      border-radius: 6px;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      box-sizing: border-box;
+    }
+    
+    select:focus, input:focus, textarea:focus {
+      outline: none;
+      border-color: #dc3545;
+      box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+    }
+
+    select:disabled {
+      background-color: #f8f9fa;
+      color: #6c757d;
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+    
+    button { 
+      margin-top: 20px; 
+      padding: 15px 30px; 
+      background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+      color: white; 
+      border: none; 
+      cursor: pointer; 
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+    }
+    
+    button:hover { 
+      background: linear-gradient(135deg, #c82333 0%, #a71e2a 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4);
+    }
+    
+    .machine-entry { 
+      border: 2px solid #dee2e6; 
+      padding: 20px; 
+      margin-top: 20px; 
+      border-radius: 10px; 
+      background: #f8f9fa;
+    }
+    
+    .remove-btn { 
+      background: #dc3545; 
+      margin-top: 15px; 
+      display: inline-block; 
+      padding: 8px 16px; 
+      cursor: pointer; 
+      color: white; 
+      border-radius: 6px;
+      font-size: 12px;
+      transition: background 0.3s ease;
+    }
+    
+    .remove-btn:hover {
+      background: #c82333;
+    }
+    
+    .status-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      margin-left: 10px;
+    }
+    
+    .status-pending {
+      background: #fff3cd;
+      color: #856404;
+    }
+    
+    .status-in-progress {
+      background: #cce5ff;
+      color: #004085;
+    }
+    
+    .status-completed {
+      background: #d4edda;
+      color: #155724;
+    }
+    
+    .status-sent-back {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    .status-transit {
+      background: #17a2b8;
+      color: white;
+    }
+    
+    
+    @media (max-width: 768px) {
+      body {
+        padding: 20px;
+      }
+      
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .content {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-header" style="display: none;">
+    <div class="logo">Asiacell LSR Service</div>
+    <div class="user-info">
+      <span class="welcome-text" id="welcomeText">Welcome, </span>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <header>
+      <div class="logo">Asiacell LSR Service</div>
+      <h2>Logistic Officer - Add Machines</h2>
+    </header>
+
+    <div class="content">
+      <!-- Merge Requests Section -->
+      <div class="card" id="mergeSection" style="display: none;">
+        <h3>🔗 Merge Two Requests</h3>
+        <p>Combine two existing requests into one for processing.</p>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+          <div>
+            <label style="font-weight: 600; color: #495057;">Select First Request:</label>
+            <select id="firstRequestSelect" style="width: 100%; padding: 10px; border: 2px solid #dee2e6; border-radius: 6px; margin-top: 5px;">
+              <option value="">-- Choose Request --</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-weight: 600; color: #495057;">Select Second Request:</label>
+            <select id="secondRequestSelect" style="width: 100%; padding: 10px; border: 2px solid #dee2e6; border-radius: 6px; margin-top: 5px;">
+              <option value="">-- Choose Request --</option>
+            </select>
+          </div>
+        </div>
+
+        <button type="button" onclick="mergeRequests()" style="background: linear-gradient(135deg, #17a2b8 0%, #138496 100%); margin-right: 10px;">🔗 Merge Requests</button>
+        <button type="button" onclick="toggleMergeSection()" style="background: #6c757d;">Cancel</button>
+      </div>
+
+      <!-- Display requester data -->
+      <div class="card" id="requesterInfo"></div>
+
+      <form onsubmit="saveMachineData(event)">
+        <div id="machineList"></div>
+
+        <button type="button" onclick="addMachine()">+ Add Machine</button>
+
+        <label>Logistic Officer Name:</label>
+        <input type="text" id="logisticOfficer" required>
+
+        <label>Logistics Officer Note:</label>
+        <textarea id="logisticsOfficerNote" placeholder="Add a note from the logistics officer..." rows="3" style="margin-top: 8px; width: 100%; border: 2px solid #dee2e6; border-radius: 6px; padding: 8px; font-size: 14px;"></textarea>
+
+        <label>Complete Work Date:</label>
+<input type="date" id="completeWorkDate">
+
+        <div style="margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #ffc107;">
+          <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px;">
+            <input type="checkbox" id="addNoteCheckbox" onchange="toggleNoteField()" style="width: 18px; height: 18px; cursor: pointer;">
+            <label for="addNoteCheckbox" style="font-weight: 600; color: #495057; cursor: pointer; font-size: 16px;">
+              📝 Add Note to Requester
+            </label>
+          </div>
+          
+          <div id="noteField" style="display: none; margin: 15px 0;">
+            <label style="font-weight: 600; color: #495057;">Note to Requester:</label>
+            <textarea id="requesterNote" placeholder="Add a note explaining what changes are needed..." rows="3" style="margin-top: 8px;"></textarea>
+            
+            <button type="button" onclick="saveAndSendBack()" style="background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%); margin-top: 15px; padding: 12px 24px; border: none; border-radius: 6px; color: white; font-weight: 600; cursor: pointer; transition: all 0.3s ease;">
+              📤 Send Back to Requester
+            </button>
+          </div>
+        </div>
+
+        <div id="requestSummary" style="margin: 20px 0; padding: 20px; background: #f8f9fa; border-radius: 10px; border: 1px solid #dee2e6; display: none;">
+          <h4 style="margin: 0 0 15px 0; color: #495057;">📋 Request Summary</h4>
+          <div id="summaryContent"></div>
+        </div>
+
+        <button type="button" onclick="toggleMergeSection()" style="background: linear-gradient(135deg, #17a2b8 0%, #138496 100%); margin-right: 10px;">🔗 Merge Requests</button>
+        <button type="button" onclick="showSummary()" style="background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%); margin-right: 10px;">📋 Review Request</button>
+        <button type="submit">✅ Finish & Save as In-Progress</button>
+        
+        <div style="margin-top: 20px; text-align: center;">
+          <button type="button" onclick="viewCompletedRequests()" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); margin: 0 10px;">
+            View Completed Requests →
+          </button>
+          <button type="button" onclick="window.location.href='in-progress-requests.html'" style="background: linear-gradient(135deg, #007bff 0%, #0056b3 100%); margin: 0 10px;">
+            View In-Progress Requests →
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    // Check authentication on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      const isAuthenticated = localStorage.getItem('authenticated') === 'true';
+      const username = localStorage.getItem('username');
+      const userRole = localStorage.getItem('userRole');
+      
+      if (!isAuthenticated || !username || userRole !== 'request-viewer') {
+        // User is not authenticated as request viewer - redirect to login
+        localStorage.removeItem('authenticated');
+        localStorage.removeItem('username');
+        localStorage.removeItem('userRole');
+        window.location.href = 'login.html';
+        return;
+      }
+      
+      // Show auth header with user info
+      document.querySelector('.auth-header').style.display = 'flex';
+      document.getElementById('welcomeText').textContent = 'Welcome, ' + username;
+
+      // Get current request ID
+      const currentRequestId = localStorage.getItem('currentRequestId');
+
+      // Listen for storage events to update logistic note dynamically
+      window.addEventListener('storage', function(event) {
+        if (event.key === `machine_${currentRequestId}`) {
+          updateLogisticNoteDisplay(currentRequestId);
+        }
+      });
+
+      // Also poll periodically to catch updates from same tab
+      setInterval(() => {
+        updateLogisticNoteDisplay(currentRequestId);
+      }, 2000); // Check every 2 seconds
+
+      // Load requester info after DOM is ready
+      loadRequesterInfo();
+
+    });
+
+    // Function to update logistic note display
+    function updateLogisticNoteDisplay(requestId) {
+      const noteContainer = document.getElementById('logisticNoteContainer');
+      if (noteContainer) {
+        if (checkLogisticNote(requestId)) {
+          const noteContent = getLogisticNote(requestId);
+          const noteFrom = getLogisticNoteFrom(requestId);
+          noteContainer.innerHTML = `
+            <div class="description-area" style="background: #fff3cd; border-left: 4px solid #ffc107; margin-top: 20px;">
+              <strong style="color: #856404;">📝 Note from ${noteFrom}:</strong>
+              <p style="color: #856404;">${noteContent}</p>
+            </div>
+          `;
+        } else {
+          noteContainer.innerHTML = '';
+        }
+      }
+    }
+
+    function logout() {
+      // Clear authentication data
+      localStorage.removeItem('authenticated');
+      localStorage.removeItem('username');
+      localStorage.removeItem('userRole');
+      
+      // Redirect to login page
+      window.location.href = 'login.html';
+    }
+
+
+    let machines = [];
+
+    // Function to load and display requester info
+    function loadRequesterInfo() {
+      console.log('Loading requester info...');
+      const requesterData = JSON.parse(localStorage.getItem("requesterData") || '{}');
+      
+      // Get machine data using consistent SR-based ID
+      const srNumber = requesterData.srNumber;
+      const currentRequestId = localStorage.getItem('currentRequestId');
+      const requestId = srNumber ? srNumber.replace('SR-', '') : currentRequestId;
+      
+      let machineData = null;
+      if (requestId) {
+        machineData = JSON.parse(localStorage.getItem(`machine_${requestId}`) || 'null');
+      }
+      
+      // Fallback to old key if not found with consistent ID
+      if (!machineData || machineData === 'null') {
+        machineData = JSON.parse(localStorage.getItem("machineData") || 'null');
+      }
+      
+      console.log('Requester data from localStorage:', requesterData);
+      console.log('Machine data for request ID:', requestId, 'Data:', machineData);
+      
+      if(requesterData && Object.keys(requesterData).length > 0){
+        console.log('Requester data found, displaying details');
+        let completeWorkDateDisplay = 'Not completed';
+        if(machineData && machineData !== 'null' && machineData.completeWorkDate) {
+          completeWorkDateDisplay = new Date(machineData.completeWorkDate).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        }
+        
+        // Determine request status
+        let status = 'pending';
+        let statusText = 'Pending';
+        let statusClass = 'status-pending';
+
+        // Check if this is a transit request
+        const isTransit = requesterData.isTransit;
+        let transitLabel = '';
+        if (isTransit) {
+          transitLabel = ' <span class="status-badge status-transit">Transit</span>';
+        }
+        
+        // Check if sent to contractor
+        let contractorLabel = '';
+        if (machineData && machineData !== 'null' && machineData.sentToContractor) {
+          const sentDate = machineData.sentToContractorDate ? new Date(machineData.sentToContractorDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' }) : '';
+          const sentBy = machineData.sentToContractorBy || 'Unknown';
+          contractorLabel = ` <span class="status-badge" style="background: #17a2b8; color: white;" title="Sent by ${sentBy} on ${sentDate}">Sent to Contractor</span>`;
+        }
+        
+        // Check if this is a sent-back request
+        if (machineData && machineData !== 'null' && (machineData.status === 'sent-back' || machineData.status === 'sent-back-to-requester' || machineData.status === 'sent-back-to-viewer')) {
+          status = 'sent-back';
+          statusText = 'Sent Back';
+          statusClass = 'status-sent-back';
+        } else if (machineData && machineData !== 'null') {
+          // If machine data exists (machines are added), it's in progress
+          status = 'in-progress';
+          statusText = 'In Progress';
+          statusClass = 'status-in-progress';
+        } else if (localStorage.getItem(`logistic_${requestId}`)) {
+          status = 'completed';
+          statusText = 'Completed';
+          statusClass = 'status-completed';
+        }
+        
+        document.getElementById("requesterInfo").innerHTML = `
+          <h3>Requester Information <span class="status-badge ${statusClass}">${statusText}</span>${transitLabel}${contractorLabel}</h3>
+          <div class="info-grid">
+            <div class="info-item">
+              <strong>Department</strong>
+              <p>${requesterData.department || 'Not specified'}</p>
+            </div>
+            <div class="info-item">
+              <strong>SR Number</strong>
+              <p>${requesterData.srNumber || 'Not specified'}</p>
+            </div>
+            <div class="info-item">
+              <strong>Requester Name</strong>
+              <p>${requesterData.requesterName || 'Not specified'}</p>
+            </div>
+            <div class="info-item">
+              <strong>Manager Name</strong>
+              <p>${requesterData.chiefName || 'Not specified'}</p>
+            </div>
+            <div class="info-item">
+              <strong>Warehouse Officer</strong>
+              <p>${requesterData.warehouseOfficer || 'Not specified'}</p>
+            </div>
+            <div class="info-item">
+              <strong>Request Date</strong>
+              <p>${requesterData.requestDate ? new Date(requesterData.requestDate).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : 'Not specified'}</p>
+            </div>
+            <div class="info-item">
+              <strong>Complete Work Date</strong>
+              <p>${completeWorkDateDisplay}</p>
+            </div>
+            <div class="info-item">
+              <strong>Status</strong>
+              <p>${statusText}</p>
+            </div>
+          </div>
+          <div class="description-area">
+            <strong>Selected Service Details</strong>
+            <p>${Array.isArray(requesterData.serviceDetail) ? requesterData.serviceDetail.join(', ') : (requesterData.serviceDetail || 'None')}</p>
+          </div>
+          <div class="description-area">
+            <strong>Additional Details</strong>
+            <p>${requesterData.details || 'No details provided'}</p>
+          </div>
+          
+          <div id="logisticNoteContainer"></div>
+          <div id="approvalInfo" style="display: none; margin-top: 20px;"></div>
+          <div style="margin-top: 20px; text-align: center;">
+            <button id="shareWhatsAppBtn" class="action-btn" onclick="shareOnWhatsApp()">📱 Share on WhatsApp</button>
+          </div>
+        `;
+        // Update logistic note display after setting the HTML
+        updateLogisticNoteDisplay(requestId);
+
+        // Display approval info if work is approved
+        if (machineData && machineData.status === 'completion_approved') {
+          const approvalDiv = document.getElementById('approvalInfo');
+          approvalDiv.style.display = 'block';
+          approvalDiv.innerHTML = `
+            <div class="description-area" style="background: #d4edda; border-left: 4px solid #28a745;">
+          <strong style="color: #155724; display: none;">✅ Work Approved</strong>
+          <p style="color: #155724; display: none;">${machineData.additionalInfo || 'No additional information provided.'}</p>
+          ${machineData.pictures ? machineData.pictures.map(pic => `<img src="${pic}" alt="Approval Picture" style="max-width: 150px; height: auto; margin-top: 10px; margin-right: 10px; border: 1px solid #dee2e6; border-radius: 5px; cursor: pointer;" onclick="window.open(this.src, '_blank')">`).join('') : ''}
+        </div>
+          `;
+        }
+      } else {
+        console.log('No requester data found, showing error message');
+        // Show error message if no requester data found
+        document.getElementById("requesterInfo").innerHTML = `
+          <h3>Error Loading Request</h3>
+          <div style="text-align: center; padding: 40px; color: #dc3545;">
+            <p>Unable to load request details. Please go back and try again.</p>
+            <button onclick="window.history.back()" style="margin-top: 20px; padding: 10px 20px; background: #dc3545; color: white; border: none; border-radius: 5px; cursor: pointer;">Go Back</button>
+          </div>
+        `;
+      }
+    }
+
+    // Function to check if logistic note exists
+    function checkLogisticNote(requestId) {
+      // Check machine data first
+      const machineData = localStorage.getItem(`machine_${requestId}`);
+      if (machineData) {
+        try {
+          const parsedData = JSON.parse(machineData);
+          if (parsedData.storeKeeperNote && parsedData.storeKeeperNote.trim() !== '') {
+            return true;
+          }
+          if (parsedData.chiefNote && parsedData.chiefNote.trim() !== '') {
+            return true;
+          }
+          if (parsedData.logisticNote && parsedData.logisticNote.trim() !== '') {
+            return true;
+          }
+        } catch (e) {
+          // Ignore parse error
+        }
+      }
+
+      // Check logistic data for logisticsOfficerNote
+      const logisticData = localStorage.getItem(`logistic_${requestId}`);
+      if (logisticData) {
+        try {
+          const parsedData = JSON.parse(logisticData);
+          if (parsedData.logisticsOfficerNote && parsedData.logisticsOfficerNote.trim() !== '') {
+            return true;
+          }
+        } catch (e) {
+          // Ignore parse error
+        }
+      }
+
+      return false;
+    }
+
+    // Function to get logistic note
+    function getLogisticNote(requestId) {
+      // Check machine data first
+      const machineData = localStorage.getItem(`machine_${requestId}`);
+      if (machineData) {
+        try {
+          const parsedData = JSON.parse(machineData);
+          if (parsedData.storeKeeperNote && parsedData.storeKeeperNote.trim() !== '') {
+            return parsedData.storeKeeperNote;
+          }
+          if (parsedData.chiefNote && parsedData.chiefNote.trim() !== '') {
+            return parsedData.chiefNote;
+          }
+          if (parsedData.logisticNote && parsedData.logisticNote.trim() !== '') {
+            return parsedData.logisticNote;
+          }
+        } catch (e) {
+          // Ignore parse error
+        }
+      }
+
+      // Check logistic data for logisticsOfficerNote
+      const logisticData = localStorage.getItem(`logistic_${requestId}`);
+      if (logisticData) {
+        try {
+          const parsedData = JSON.parse(logisticData);
+          if (parsedData.logisticsOfficerNote && parsedData.logisticsOfficerNote.trim() !== '') {
+            return parsedData.logisticsOfficerNote;
+          }
+        } catch (e) {
+          // Ignore parse error
+        }
+      }
+
+      return '';
+    }
+
+    // Function to get who the logistic note is from
+    function getLogisticNoteFrom(requestId) {
+      // Check machine data first
+      const machineData = localStorage.getItem(`machine_${requestId}`);
+      if (machineData) {
+        try {
+          const parsedData = JSON.parse(machineData);
+          if (parsedData.storeKeeperNote && parsedData.storeKeeperNote.trim() !== '') {
+            return 'Store Keeper';
+          }
+          if (parsedData.chiefNote && parsedData.chiefNote.trim() !== '') {
+            return 'Chief';
+          }
+          if (parsedData.logisticNote && parsedData.logisticNote.trim() !== '') {
+            return 'Logistic';
+          }
+        } catch (e) {
+          // Ignore parse error
+        }
+      }
+
+      // Check logistic data for logisticsOfficerNote
+      const logisticData = localStorage.getItem(`logistic_${requestId}`);
+      if (logisticData) {
+        try {
+          const parsedData = JSON.parse(logisticData);
+          if (parsedData.logisticsOfficerNote && parsedData.logisticsOfficerNote.trim() !== '') {
+            return 'Logistic';
+          }
+        } catch (e) {
+          // Ignore parse error
+        }
+      }
+
+      return 'Logistic';
+    }
+
+    // Function to toggle note field visibility
+    function toggleNoteField() {
+      const noteField = document.getElementById('noteField');
+      const checkbox = document.getElementById('addNoteCheckbox');
+      noteField.style.display = checkbox.checked ? 'block' : 'none';
+    }
+
+    // Function to save and send back to requester
+    function saveAndSendBack() {
+      const addNoteCheckbox = document.getElementById('addNoteCheckbox');
+      const requesterNote = document.getElementById('requesterNote').value;
+      
+      if (!addNoteCheckbox.checked || requesterNote.trim() === '') {
+        alert('Please add a note before sending back to requester.');
+        return;
+      }
+
+      const validMachines = machines.filter(m=>m.machine);
+      const completeWorkDate = document.getElementById("completeWorkDate").value;
+      const logisticOfficer = document.getElementById("logisticOfficer").value;
+
+      if(!logisticOfficer){
+        alert("Please enter Logistic Officer Name.");
+        return;
+      }
+
+      const machineData = {
+        machines: validMachines,
+        completeWorkDate: completeWorkDate,
+        logisticOfficer: logisticOfficer,
+        requesterNote: requesterNote,
+        status: 'sent-to-requester' // Mark as sent to requester
+      };
+
+      // Get current request data to extract SR number for consistent ID
+      const requesterData = JSON.parse(localStorage.getItem('requesterData') || '{}');
+      const srNumber = requesterData.srNumber;
+      
+      // Use SR-based ID for consistency across all pages
+      const requestId = srNumber ? srNumber.replace('SR-', '') : (localStorage.getItem('currentRequestId') || Date.now().toString());
+      
+      // Save machine data with consistent ID
+      localStorage.setItem(`machine_${requestId}`, JSON.stringify(machineData));
+      
+      // Also ensure the request data is saved with the same consistent ID
+      if (srNumber) {
+        localStorage.setItem(`request_${requestId}`, JSON.stringify(requesterData));
+      }
+      
+      // Update currentRequestId to the consistent ID for future reference
+      localStorage.setItem('currentRequestId', requestId);
+      
+      // Remove logistic data to mark as pending/editable for requester
+      localStorage.removeItem(`logistic_${requestId}`);
+      
+      // Show confirmation
+      alert("Request has been sent back to the requester with your note! The requester will see it in their dashboard.");
+      
+      // Redirect back to requests list
+      window.location.href = "requests.html";
+    }
+
+    async function addMachine() {
+      machines.push({machine:'', location:'', workType:'', count:1, days:1});
+      await renderMachines();
+    }
+
+    async function removeMachine(index){
+      machines.splice(index,1);
+      await renderMachines();
+    }
+
+    async function updateMachine(index, field, value){
+      if(field === 'machine') {
+        machines[index].machine = value;
+        // Clear dependent selections when machine changes
+        machines[index].location = '';
+        machines[index].workType = '';
+      }
+      if(field === 'count') machines[index].count = parseInt(value) || 1;
+      if(field === 'days') machines[index].days = parseInt(value) || 1;
+      if(field === 'location') machines[index].location = value;
+      if(field === 'workType') machines[index].workType = value;
+      await renderMachines();
+    }
+
+    async function renderMachines(){
+      const container = document.getElementById("machineList");
+      container.innerHTML = '';
+
+      // Load data from Excel file
+      let excelData = [];
+      let machinesData = [];
+      let locationsData = [];
+      let workTypesData = [];
+
+      // Function to load Excel data
+      async function loadExcelData() {
+        try {
+          const response = await fetch('database.xlsx');
+          const arrayBuffer = await response.arrayBuffer();
+          const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+
+          // Get the first worksheet
+          const sheetName = workbook.SheetNames[0];
+          const worksheet = workbook.Sheets[sheetName];
+
+          // Convert to JSON
+          const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+          // Process the data (skip header row if present)
+          const dataRows = jsonData.slice(1).filter(row => row.length >= 4);
+
+          // Extract unique values for dropdowns
+          const machinesSet = new Set();
+          const locationsSet = new Set();
+          const workTypesSet = new Set();
+
+          dataRows.forEach(row => {
+            if (row[0]) machinesSet.add(row[0].toString().trim());
+            if (row[1]) locationsSet.add(row[1].toString().trim());
+            if (row[2]) workTypesSet.add(row[2].toString().trim());
+          });
+
+          machinesData = Array.from(machinesSet);
+          locationsData = Array.from(locationsSet);
+          workTypesData = Array.from(workTypesSet);
+          excelData = dataRows;
+
+          console.log('Excel data loaded successfully');
+          console.log('Machines:', machinesData.length);
+          console.log('Locations:', locationsData.length);
+          console.log('Work Types:', workTypesData.length);
+
+        } catch (error) {
+          console.error('Error loading Excel file:', error);
+          // Fallback to empty arrays if Excel loading fails
+          machinesData = [];
+          locationsData = [];
+          workTypesData = [];
+          excelData = [];
+        }
+      }
+
+      // Load Excel data when page loads
+      await loadExcelData();
+
+      // Render machines using Excel data
+      machines.forEach((m,i)=>{
+        // Get filtered locations and work types based on selected machine from Excel data
+        const filteredLocations = m.machine ? excelData
+          .filter(row => row[0] && row[0].toString().trim() === m.machine)
+          .map(row => row[1] ? row[1].toString().trim() : '')
+          .filter((value, index, self) => value && self.indexOf(value) === index) : [];
+
+        const filteredWorkTypes = m.machine ? excelData
+          .filter(row => row[0] && row[0].toString().trim() === m.machine)
+          .map(row => row[2] ? row[2].toString().trim() : '')
+          .filter((value, index, self) => value && self.indexOf(value) === index) : [];
+
+        // Price calculation removed - no longer needed in request viewer
+
+        const div = document.createElement('div');
+        div.className = 'machine-entry';
+        div.innerHTML = `
+          <label>Work Machine:</label>
+          <select onchange="updateMachine(${i}, 'machine', this.value)" style="font-size: 12px;">
+            <option value="">-- Select Machine --</option>
+            ${machinesData.map(machine =>
+              `<option value="${machine}" ${m.machine===machine?'selected':''}>${machine}</option>`
+            ).join('')}
+          </select>
+
+          <label>Location:</label>
+          <select onchange="updateMachine(${i}, 'location', this.value)" style="font-size: 12px;" ${!m.machine ? 'disabled' : ''}>
+            <option value="">-- ${m.machine ? 'Select Location' : 'Select Machine First'} --</option>
+            ${filteredLocations.map(location =>
+              `<option value="${location}" ${m.location===location?'selected':''}>${location}</option>`
+            ).join('')}
+          </select>
+
+          <label>Work Type / destination:</label>
+          <select onchange="updateMachine(${i}, 'workType', this.value)" style="font-size: 12px;" ${!m.machine ? 'disabled' : ''}>
+            <option value="">-- ${m.machine ? 'Select Work Type' : 'Select Machine First'} --</option>
+            ${filteredWorkTypes.map(workType =>
+              `<option value="${workType}" ${m.workType===workType?'selected':''}>${workType}</option>`
+            ).join('')}
+          </select>
+
+          <label>Number of Machines / Labors:</label>
+          <input type="number" min="1" value="${m.count}" onchange="updateMachine(${i}, 'count', this.value)">
+
+          <label>Days of Work:</label>
+          <input type="number" min="1" value="${m.days}" onchange="updateMachine(${i}, 'days', this.value)">
+
+          <span class="remove-btn" onclick="removeMachine(${i})">Remove</span>
+        `;
+        container.appendChild(div);
+      });
+
+      // Total price display removed - no longer needed in request viewer
+    }
+
+    function saveMachineData(e){
+      e.preventDefault();
+      const validMachines = machines.filter(m=>m.machine);
+      const completeWorkDate = document.getElementById("completeWorkDate").value;
+      const logisticOfficer = document.getElementById("logisticOfficer").value;
+      const logisticsOfficerNote = document.getElementById("logisticsOfficerNote").value;
+      const addNoteCheckbox = document.getElementById("addNoteCheckbox");
+      const requesterNote = addNoteCheckbox.checked ? document.getElementById("requesterNote").value : '';
+
+      if(validMachines.length===0){
+        alert("Please add at least one machine.");
+        return;
+      }
+
+      if(!logisticOfficer){
+        alert("Please enter Logistic Officer Name.");
+        return;
+      }
+
+      const machineData = {
+        machines: validMachines,
+        completeWorkDate: completeWorkDate,
+        logisticOfficer: logisticOfficer,
+        logisticsOfficerNote: logisticsOfficerNote
+      };
+
+      // Only add requesterNote if checkbox is checked and note is provided
+      if (addNoteCheckbox.checked && requesterNote.trim() !== '') {
+        machineData.requesterNote = requesterNote;
+      }
+
+      // Get current request data to extract SR number for consistent ID
+      const requesterData = JSON.parse(localStorage.getItem('requesterData') || '{}');
+      requesterData.viewerUsername = localStorage.getItem('username') || 'default_viewer';
+      const srNumber = requesterData.srNumber;
+      const isTransit = requesterData.isTransit;
+
+      // Use SR-based ID for consistency across all pages
+      const requestId = srNumber ? srNumber.replace('SR-', '') : (localStorage.getItem('currentRequestId') || Date.now().toString());
+
+      // Save machine data with consistent ID
+      localStorage.setItem(`machine_${requestId}`, JSON.stringify(machineData));
+
+      // Also ensure the request data is saved with the same consistent ID for the current request viewer
+      if (srNumber) {
+        const viewerUsername = localStorage.getItem('username') || 'default_viewer';
+        localStorage.setItem(`request_${requestId}_${viewerUsername}`, JSON.stringify(requesterData));
+      }
+
+      // Update currentRequestId to the consistent ID for future reference
+      localStorage.setItem('currentRequestId', requestId);
+
+      // Only remove logistic data if we're not sending back (this is for normal save)
+      // Don't remove logistic data here as it might be needed for completed requests
+
+      // Check if this was sent back from logistic - if so, send back to chief approval
+      const existingMachineData = JSON.parse(localStorage.getItem(`machine_${requestId}`) || '{}');
+      if (existingMachineData.status === 'sent-back') {
+        // This was sent back from logistic, so send back to chief for re-approval
+        localStorage.setItem(`pending_chief_approval_${requestId}`, JSON.stringify(requesterData));
+        alert("Request has been submitted back to chief for re-approval!");
+      } else if (isTransit) {
+        // Transit request - send to logistic-control for work approval instead of chief
+        machineData.status = 'work_approved';
+        localStorage.setItem(`request_${requestId}`, JSON.stringify(requesterData));
+        localStorage.setItem(`pending_transit_completion_approval_${requestId}`, JSON.stringify(machineData));
+        // Remove assignment to allow work completion approval
+        localStorage.removeItem(`assignment_${requestId}`);
+        localStorage.removeItem(`assigned_viewer_${requestId}`);
+        alert("Transit request has been submitted");
+      } else {
+        // Normal completion - update status and save for chief completion approval
+        machineData.status = 'pending_completion_approval';
+        localStorage.setItem(`pending_chief_completion_approval_${requestId}`, JSON.stringify(machineData));
+        alert("Request has been submitted for Manager completion approval!");
+      }
+
+      // Lock the request as view-only immediately after saving
+      disableForm();
+
+      // Redirect to appropriate dashboard based on user role
+      setTimeout(() => {
+        if (isTransit) {
+          window.location.href = "request-viewer-dashboard.html";
+        } else {
+          window.location.href = "requests.html";
+        }
+      }, 1000);
+    }
+
+    function viewCompletedRequests() {
+      window.location.href = "completed-requests.html";
+    }
+
+    // Function to show request summary
+    function showSummary() {
+      const requesterData = JSON.parse(localStorage.getItem('requesterData') || '{}');
+      const logisticOfficer = document.getElementById('logisticOfficer').value;
+      const logisticsOfficerNote = document.getElementById('logisticsOfficerNote').value;
+      const completeWorkDate = document.getElementById('completeWorkDate').value;
+
+      let summaryHTML = `
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+          <div><strong>SR Number:</strong> ${requesterData.srNumber || 'N/A'}</div>
+          <div><strong>Requester Name:</strong> ${requesterData.requesterName || 'N/A'}</div>
+          <div><strong>Department:</strong> ${requesterData.department || 'N/A'}</div>
+          <div><strong>Manager Name:</strong> ${requesterData.chiefName || 'N/A'}</div>
+          <div><strong>Warehouse Officer:</strong> ${requesterData.warehouseOfficer || 'N/A'}</div>
+          <div><strong>Logistic Officer:</strong> ${logisticOfficer || 'N/A'}</div>
+          <div><strong>Request Date:</strong> ${requesterData.requestDate ? new Date(requesterData.requestDate).toLocaleDateString() : 'N/A'}</div>
+          <div><strong>Complete Work Date:</strong> ${completeWorkDate ? new Date(completeWorkDate).toLocaleDateString() : 'N/A'}</div>
+        </div>
+        <div style="margin-bottom: 20px;">
+          <strong>Selected Service Details:</strong><br>
+          <p style="background: white; padding: 10px; border-radius: 5px; margin: 5px 0;">${Array.isArray(requesterData.serviceDetail) ? requesterData.serviceDetail.join(', ') : (requesterData.serviceDetail || 'None')}</p>
+        </div>
+        <div style="margin-bottom: 20px;">
+          <strong>Additional Details:</strong><br>
+          <p style="background: white; padding: 10px; border-radius: 5px; margin: 5px 0;">${requesterData.details || 'No details provided'}</p>
+        </div>
+      `;
+
+      if (logisticsOfficerNote.trim()) {
+        summaryHTML += `
+          <div style="margin-bottom: 20px;">
+            <strong>Logistics Officer Note:</strong><br>
+            <p style="background: white; padding: 10px; border-radius: 5px; margin: 5px 0;">${logisticsOfficerNote}</p>
+          </div>
+        `;
+      }
+
+      summaryHTML += `<strong>Machines Required:</strong><ul>`;
+      const validMachines = machines.filter(m => m.machine);
+      if (validMachines.length === 0) {
+        summaryHTML += `<li>No machines selected</li>`;
+      } else {
+        validMachines.forEach(m => {
+          const machineName = m.machine || 'Unknown Machine';
+          const locationName = m.location || 'No location specified';
+          const workTypeName = m.workType || 'No work type specified';
+          summaryHTML += `<li><strong>${machineName}</strong><br>
+                         📍 Location: ${locationName}<br>
+                         🔧 Work Type: ${workTypeName}<br>
+                         📊 Quantity: ${m.count} machine(s) for ${m.days} day(s)</li>`;
+        });
+      }
+      summaryHTML += `</ul>`;
+
+      document.getElementById('summaryContent').innerHTML = summaryHTML;
+      document.getElementById('requestSummary').style.display = 'block';
+      document.getElementById('requestSummary').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Load machine data from localStorage on page load
+    async function loadMachineData() {
+      // Get current request ID and use consistent SR-based lookup
+      const currentRequestId = localStorage.getItem('currentRequestId');
+      const requesterData = JSON.parse(localStorage.getItem('requesterData') || '{}');
+      const srNumber = requesterData.srNumber;
+
+      // Use SR-based ID for consistency
+      const requestId = srNumber ? srNumber.replace('SR-', '') : currentRequestId;
+
+      // Try to load machine data using consistent ID
+      let machineData = null;
+      if (requestId) {
+        machineData = JSON.parse(localStorage.getItem(`machine_${requestId}`) || 'null');
+      }
+
+      // Fallback to old key if not found with consistent ID
+      if (!machineData || machineData === 'null') {
+        machineData = JSON.parse(localStorage.getItem("machineData") || 'null');
+      }
+
+      console.log('Loading machine data for request ID:', requestId, 'Data:', machineData);
+
+      // Check if this is a sent-back request from logistic - if so, load machines from logistic data
+      if (machineData && (machineData.status === 'sent-back' || machineData.status === 'sent-back-to-viewer')) {
+        const logisticData = JSON.parse(localStorage.getItem(`logistic_${requestId}`) || 'null');
+        if (logisticData && logisticData.machines) {
+          machines = [...logisticData.machines];
+          console.log('Loaded machines from logistic data for sent-back request:', machines);
+        } else {
+          machines = [];
+        }
+      } else {
+        // Start with empty machines list for new requests
+        machines = [];
+      }
+      await renderMachines();
+
+      // Populate other fields if they exist (but not machines)
+      if (machineData && machineData !== 'null') {
+        // For sent-back requests, also check logistic data for field values
+        let logisticData = null;
+        if (machineData.status === 'sent-back' || machineData.status === 'sent-back-to-viewer') {
+          logisticData = JSON.parse(localStorage.getItem(`logistic_${requestId}`) || 'null');
+        }
+
+        // Populate logistic officer field
+        const logisticOfficer = machineData.logisticOfficer || (logisticData && logisticData.logisticOfficer);
+        if (logisticOfficer) {
+          document.getElementById("logisticOfficer").value = logisticOfficer;
+        }
+
+        // Populate logistics officer note field
+        const logisticsOfficerNote = machineData.logisticsOfficerNote || (logisticData && logisticData.logisticsOfficerNote);
+        if (logisticsOfficerNote) {
+          document.getElementById("logisticsOfficerNote").value = logisticsOfficerNote;
+        }
+
+        // Populate complete work date field
+        const completeWorkDate = machineData.completeWorkDate || (logisticData && logisticData.completeWorkDate);
+        if (completeWorkDate) {
+          document.getElementById("completeWorkDate").value = completeWorkDate;
+        }
+
+        // Populate note fields if they exist
+        if (machineData.requesterNote) {
+          document.getElementById("addNoteCheckbox").checked = true;
+          document.getElementById("requesterNote").value = machineData.requesterNote;
+          toggleNoteField(); // Show the note field
+        }
+
+        // If the request has been submitted for chief completion approval or is completed, disable the form
+        // But allow editing if the request was sent back from logistic for modifications
+        if (machineData.status === 'pending_completion_approval' || localStorage.getItem(`logistic_${requestId}`)) {
+          // Only disable if it's NOT a sent-back request
+          if (machineData.status !== 'sent-back' && machineData.status !== 'sent-back-to-requester' && machineData.status !== 'sent-back-to-viewer') {
+            disableForm();
+          }
+        }
+      }
+
+      // Update logistic note display after loading data
+      updateLogisticNoteDisplay(requestId);
+    }
+
+    // Function to disable form when request is submitted
+    function disableForm() {
+      // Disable all form inputs
+      const inputs = document.querySelectorAll('input, select, textarea');
+      inputs.forEach(input => {
+        input.disabled = true;
+        input.style.opacity = '0.6';
+        input.style.cursor = 'not-allowed';
+      });
+
+      // Hide the submit button and add machine button
+      const submitBtn = document.querySelector('button[type="submit"]');
+      const addMachineBtn = document.querySelector('button[onclick="addMachine()"]');
+      if (submitBtn) submitBtn.style.display = 'none';
+      if (addMachineBtn) addMachineBtn.style.display = 'none';
+
+      // Hide remove buttons
+      const removeBtns = document.querySelectorAll('.remove-btn');
+      removeBtns.forEach(btn => btn.style.display = 'none');
+
+      // Hide other action buttons
+      const mergeBtn = document.querySelector('button[onclick="toggleMergeSection()"]');
+      const reviewBtn = document.querySelector('button[onclick="showSummary()"]');
+      const sendBackBtn = document.querySelector('button[onclick="saveAndSendBack()"]');
+
+      if (mergeBtn) mergeBtn.style.display = 'none';
+      if (reviewBtn) reviewBtn.style.display = 'none';
+      if (sendBackBtn) sendBackBtn.style.display = 'none';
+
+      // Disable WhatsApp sharing button
+      const whatsappBtn = document.getElementById('shareWhatsAppBtn');
+      if (whatsappBtn) {
+        whatsappBtn.disabled = true;
+        whatsappBtn.style.opacity = '0.6';
+        whatsappBtn.style.cursor = 'not-allowed';
+      }
+
+      // Show submitted message
+      const form = document.querySelector('form');
+      const submittedMsg = document.createElement('div');
+      submittedMsg.style.cssText = `
+        margin-top: 20px;
+        padding: 15px;
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        color: white;
+        border-radius: 8px;
+        text-align: center;
+        font-weight: 600;
+        box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+      `;
+      submittedMsg.innerHTML = '✅ Request has been submitted and is awaiting logistic processing. You cannot make further edits.';
+      form.appendChild(submittedMsg);
+
+      // Add visual indicator to the page title
+      document.title = document.title + ' (Locked - View Only)';
+    }
+
+    // Function to toggle merge section visibility
+    function toggleMergeSection() {
+      const mergeSection = document.getElementById('mergeSection');
+      const isVisible = mergeSection.style.display !== 'none';
+
+      if (!isVisible) {
+        // Show merge section and populate request lists
+        mergeSection.style.display = 'block';
+        populateRequestSelects();
+      } else {
+        // Hide merge section
+        mergeSection.style.display = 'none';
+      }
+    }
+
+    // Function to populate request selects with available requests
+    function populateRequestSelects() {
+      const firstSelect = document.getElementById('firstRequestSelect');
+      const secondSelect = document.getElementById('secondRequestSelect');
+
+      // Clear existing options
+      firstSelect.innerHTML = '<option value="">-- Choose Request --</option>';
+      secondSelect.innerHTML = '<option value="">-- Choose Request --</option>';
+
+      // Get all requests from localStorage
+      const requests = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key.startsWith('request_')) {
+          try {
+            const requestData = JSON.parse(localStorage.getItem(key));
+            const requestId = key.replace('request_', '');
+            requests.push({
+              id: requestId,
+              ...requestData
+            });
+          } catch (e) {
+            console.error('Error parsing request:', e);
+          }
+        }
+      }
+
+      // Sort by date (newest first)
+      requests.sort((a, b) => new Date(b.requestDate || 0) - new Date(a.requestDate || 0));
+
+      // Add options to both selects
+      requests.forEach(request => {
+        const option1 = document.createElement('option');
+        option1.value = request.id;
+        option1.textContent = `${request.srNumber || 'N/A'} - ${request.requesterName || 'N/A'} - ${request.department || 'N/A'}`;
+
+        const option2 = option1.cloneNode(true);
+
+        firstSelect.appendChild(option1);
+        secondSelect.appendChild(option2);
+      });
+    }
+
+    // Function to merge two requests
+    function mergeRequests() {
+      const firstRequestId = document.getElementById('firstRequestSelect').value;
+      const secondRequestId = document.getElementById('secondRequestSelect').value;
+
+      if (!firstRequestId || !secondRequestId) {
+        alert('Please select both requests to merge.');
+        return;
+      }
+
+      if (firstRequestId === secondRequestId) {
+        alert('Please select two different requests.');
+        return;
+      }
+
+      // Get both requests data
+      const firstRequest = JSON.parse(localStorage.getItem(`request_${firstRequestId}`) || '{}');
+      const secondRequest = JSON.parse(localStorage.getItem(`request_${secondRequestId}`) || '{}');
+
+      if (!firstRequest.srNumber || !secondRequest.srNumber) {
+        alert('Both requests must have SR numbers to merge.');
+        return;
+      }
+
+      // Create merged request data
+      const mergedRequest = {
+        ...firstRequest,
+        srNumber: `${firstRequest.srNumber} + ${secondRequest.srNumber}`,
+        details: `MERGED REQUEST:\n\n--- Request 1 (${firstRequest.srNumber}) ---\n${firstRequest.details || 'No details'}\n\n--- Request 2 (${secondRequest.srNumber}) ---\n${secondRequest.details || 'No details'}`,
+        requesterName: `${firstRequest.requesterName} & ${secondRequest.requesterName}`,
+        chiefName: `${firstRequest.chiefName} & ${secondRequest.chiefName}`,
+        warehouseOfficer: firstRequest.warehouseOfficer || secondRequest.warehouseOfficer,
+        requestDate: firstRequest.requestDate, // Use the earlier date
+        mergedFrom: [firstRequestId, secondRequestId]
+      };
+
+      // Generate new merged request ID
+      const mergedRequestId = `merged_${Date.now()}`;
+
+      // Save merged request
+      localStorage.setItem(`request_${mergedRequestId}`, JSON.stringify(mergedRequest));
+      localStorage.setItem('requesterData', JSON.stringify(mergedRequest));
+      localStorage.setItem('currentRequestId', mergedRequestId);
+
+      // Remove original requests from localStorage
+      localStorage.removeItem(`request_${firstRequestId}`);
+      localStorage.removeItem(`request_${secondRequestId}`);
+      localStorage.removeItem(`machine_${firstRequestId}`);
+      localStorage.removeItem(`machine_${secondRequestId}`);
+      localStorage.removeItem(`logistic_${firstRequestId}`);
+      localStorage.removeItem(`logistic_${secondRequestId}`);
+
+      alert(`Requests merged successfully! Original requests removed. New merged request: ${mergedRequest.srNumber}`);
+
+      // Hide merge section and reload page
+      document.getElementById('mergeSection').style.display = 'none';
+      location.reload();
+    }
+
+    // Function to share request details on WhatsApp
+    function shareOnWhatsApp() {
+      // Get requester data from localStorage
+      const requesterData = JSON.parse(localStorage.getItem('requesterData') || '{}');
+
+      // Get machine data for logistic officer
+      const srNumber = requesterData.srNumber;
+      const requestId = srNumber ? srNumber.replace('SR-', '') : localStorage.getItem('currentRequestId');
+      const machineData = JSON.parse(localStorage.getItem(`machine_${requestId}`) || 'null');
+
+      // Mark request as "sent to contractor"
+      if (machineData) {
+        machineData.sentToContractor = true;
+        machineData.sentToContractorDate = new Date().toISOString();
+        machineData.sentToContractorBy = localStorage.getItem('username') || 'Request Viewer';
+        localStorage.setItem(`machine_${requestId}`, JSON.stringify(machineData));
+      } else {
+        // If no machine data exists yet, create it with the tag
+        const newMachineData = {
+          sentToContractor: true,
+          sentToContractorDate: new Date().toISOString(),
+          sentToContractorBy: localStorage.getItem('username') || 'Request Viewer'
+        };
+        localStorage.setItem(`machine_${requestId}`, JSON.stringify(newMachineData));
+      }
+
+      // Generate approval link
+      const approvalLink = window.location.href.replace('request-viewer.html', 'work-approval.html') + '?requestId=' + requestId;
+
+      // Get current user (request-viewer) name
+      const currentUser = localStorage.getItem('username') || 'Request Viewer';
+
+      // Generate text message with request details and approval link
+      const textMessage = `*Request ${requesterData.srNumber || 'N/A'}*\n\n` +
+        `*Department:* ${requesterData.department || 'N/A'}\n` +
+        `*Requester Name:* ${requesterData.requesterName || 'N/A'}\n` +
+        `*Manager Name:* ${requesterData.chiefName || 'N/A'}\n` +
+        `*Document Number:* ${requesterData.warehouseOfficer || 'N/A'}\n` +
+        `*Logistic Officer:* ${currentUser}\n` +
+        `*Request Date:* ${requesterData.requestDate ? new Date(requesterData.requestDate).toLocaleDateString('en-US') : 'N/A'}\n\n` +
+        `*Selected Service Details:*\n${Array.isArray(requesterData.serviceDetail) ? requesterData.serviceDetail.join(', ') : (requesterData.serviceDetail || 'None')}\n\n` +
+        `*Additional Details:*\n${requesterData.details || 'No details provided'}\n\n` +
+        `Approval Link: ${approvalLink}\n\n` +
+        `Shared from Asiacell LSR Service`;
+
+      // Encode the message for URL
+      const encodedMessage = encodeURIComponent(textMessage);
+
+      // Open WhatsApp with prefilled message
+      const whatsappUrl = `https://wa.me/?text=${encodedMessage}`;
+      window.open(whatsappUrl, '_blank');
+
+      // Show confirmation message
+      alert('✅ Request has been tagged as "Sent to Contractor"');
+
+      // Reload the page to show the updated status
+      setTimeout(() => {
+        location.reload();
+      }, 1000);
+
+      // Also generate and download JPG
+      generateRequestJPG();
+    }
+    function generateRequestJPG() {
+      // Get requester data
+      const requesterData = JSON.parse(localStorage.getItem('requesterData') || '{}');
+      const srNumber = requesterData.srNumber;
+      const requestId = srNumber ? srNumber.replace('SR-', '') : localStorage.getItem('currentRequestId');
+      const machineData = JSON.parse(localStorage.getItem(`machine_${requestId}`) || 'null');
+
+      // Get current user (request-viewer) name
+      const currentUser = localStorage.getItem('username') || 'Request Viewer';
+
+      // Create a styled document div for the image
+      const documentDiv = document.createElement('div');
+      documentDiv.style.cssText = `
+        width: 600px;
+        padding: 30px;
+        background: white;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        color: #333;
+        border: 2px solid #dc3545;
+        border-radius: 10px;
+        position: absolute;
+        left: -9999px;
+        top: -9999px;
+      `;
+
+      documentDiv.innerHTML = `
+        <div style="text-align: center; border-bottom: 3px solid #dc3545; padding-bottom: 20px; margin-bottom: 30px;">
+          <h1 style="color: #dc3545; margin: 0; font-size: 24px;">Asiacell LSR Service</h1>
+          <h2 style="margin: 10px 0 0 0; font-size: 18px; color: #495057;">Request Details</h2>
+          <p style="margin: 5px 0; font-weight: bold; color: #dc3545;">SR Number: ${requesterData.srNumber || 'N/A'}</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px;">
+          <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #dc3545;">
+            <strong style="color: #495057;">Department:</strong><br>
+            <span>${requesterData.department || 'N/A'}</span>
+          </div>
+          <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #dc3545;">
+            <strong style="color: #495057;">Requester Name:</strong><br>
+            <span>${requesterData.requesterName || 'N/A'}</span>
+          </div>
+          <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #dc3545;">
+            <strong style="color: #495057;">Manager Name:</strong><br>
+            <span>${requesterData.chiefName || 'N/A'}</span>
+          </div>
+          <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #dc3545;">
+            <strong style="color: #495057;">Document Number:</strong><br>
+            <span>${requesterData.warehouseOfficer || 'N/A'}</span>
+          </div>
+          <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #dc3545;">
+            <strong style="color: #495057;">Logistic Officer:</strong><br>
+            <span>${currentUser}</span>
+          </div>
+          <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; border-left: 4px solid #dc3545;">
+            <strong style="color: #495057;">Request Date:</strong><br>
+            <span>${requesterData.requestDate ? new Date(requesterData.requestDate).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A'}</span>
+          </div>
+        </div>
+
+        <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; border-left: 4px solid #dc3545; margin-bottom: 30px;">
+          <strong style="color: #495057; font-size: 16px;">Selected Service Details:</strong><br>
+          <p style="margin: 10px 0 0 0; line-height: 1.6;">${Array.isArray(requesterData.serviceDetail) ? requesterData.serviceDetail.join(', ') : (requesterData.serviceDetail || 'None')}</p>
+        </div>
+        <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; border-left: 4px solid #dc3545; margin-bottom: 30px;">
+          <strong style="color: #495057; font-size: 16px;">Additional Details:</strong><br>
+          <p style="margin: 10px 0 0 0; line-height: 1.6;">${requesterData.details || 'No details provided'}</p>
+        </div>
+
+        <div style="text-align: center; color: #6c757d; font-size: 12px; border-top: 1px solid #dee2e6; padding-top: 20px;">
+          Generated from Asiacell LSR Service
+        </div>
+      `;
+
+      // Append to body temporarily
+      document.body.appendChild(documentDiv);
+
+      // Generate canvas
+      html2canvas(documentDiv, {
+        backgroundColor: '#ffffff',
+        scale: 2,
+        useCORS: true,
+        width: 600,
+        height: documentDiv.offsetHeight
+      }).then(canvas => {
+        // Remove the temporary div
+        document.body.removeChild(documentDiv);
+
+        // Convert canvas to blob
+        canvas.toBlob(blob => {
+          // Create download link
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `request_${requesterData.srNumber || 'details'}.jpg`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+        }, 'image/jpeg', 0.95);
+      }).catch(error => {
+        // Remove the temporary div in case of error
+        if (document.body.contains(documentDiv)) {
+          document.body.removeChild(documentDiv);
+        }
+        console.error('Error generating JPG:', error);
+        alert('Error generating image. Please try again.');
+      });
+    }
+
+
+    // Load machine data after DOM is ready
+    document.addEventListener('DOMContentLoaded', function() {
+      // ... existing authentication code ...
+
+      // Load requester info after DOM is ready
+      loadRequesterInfo();
+
+      // Load machine data after DOM is ready
+      loadMachineData();
+
+      // Update local storage data every 3 seconds
+      setInterval(() => {
+        loadRequesterInfo();
+        // Note: loadMachineData is not called here to avoid resetting unsaved machine changes
+      }, 3000);
+    });
+  </script>
+</body>
+</html>

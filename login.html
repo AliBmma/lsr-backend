@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login - Asiacell - SCM -LSR </title>
+  <style>
+    body { 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .login-container {
+      background: white;
+      padding: 40px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 450px;
+      text-align: center;
+      border-top: 4px solid #dc3545;
+    }
+    
+    .logo { 
+      font-size: 28px; 
+      font-weight: bold; 
+      color: #dc3545;
+      margin-bottom: 20px;
+    }
+    
+    .login-title {
+      font-size: 24px;
+      color: #495057;
+      margin-bottom: 25px;
+      font-weight: 600;
+    }
+    
+    .role-selection {
+      margin-bottom: 25px;
+      text-align: left;
+    }
+    
+    .role-selection label {
+      display: block;
+      margin-bottom: 10px;
+      font-weight: 600;
+      color: #495057;
+      font-size: 14px;
+    }
+    
+    .role-options {
+      display: flex;
+      gap: 15px;
+      margin-top: 8px;
+    }
+    
+    .role-option {
+      flex: 1;
+      padding: 12px;
+      border: 2px solid #dee2e6;
+      border-radius: 6px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background: #f8f9fa;
+    }
+    
+    .role-option.selected {
+      border-color: #dc3545;
+      background: #fff5f5;
+      box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+    }
+    
+    .role-option:hover {
+      border-color: #adb5bd;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+    
+    label { 
+      display: block; 
+      margin-bottom: 8px; 
+      font-weight: 600;
+      color: #495057;
+      font-size: 14px;
+    }
+    
+    input { 
+      width: 100%; 
+      padding: 12px;
+      border: 2px solid #dee2e6;
+      border-radius: 6px;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      box-sizing: border-box;
+    }
+    
+    input:focus {
+      outline: none;
+      border-color: #dc3545;
+      box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+    }
+    
+    button { 
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+    }
+    
+    button:hover { 
+      background: linear-gradient(135deg, #c82333 0%, #a71e2a 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4);
+    }
+    
+    button:disabled {
+      background: #6c757d;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    
+    .error-message {
+      color: #dc3545;
+      font-size: 14px;
+      margin-top: 10px;
+      display: none;
+    }
+    
+    .success-message {
+      color: #28a745;
+      font-size: 14px;
+      margin-top: 10px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="logo">Asiacell - SCM -LSR </div>
+    <h2 class="login-title">LSR Service Login</h2>
+    
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required placeholder="Enter your username">
+      </div>
+      
+      <div class="form-group">
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required placeholder="Enter your password">
+      </div>
+      
+      <div id="errorMessage" class="error-message">
+        Invalid username or password. Please try again.
+      </div>
+      
+      <div id="successMessage" class="success-message">
+        Login successful! Redirecting...
+      </div>
+      
+      <button type="submit" id="loginButton">Login</button>
+    </form>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+      const errorMessage = document.getElementById('errorMessage');
+      const successMessage = document.getElementById('successMessage');
+      const loginButton = document.getElementById('loginButton');
+
+      // Hide previous messages
+      errorMessage.style.display = 'none';
+      successMessage.style.display = 'none';
+
+      // Disable button during login
+      loginButton.disabled = true;
+      loginButton.textContent = 'Logging in...';
+
+      try {
+        const response = await API.auth.login(username, password);
+
+        // Store authentication data
+        localStorage.setItem('authenticated', 'true');
+        localStorage.setItem('username', response.user.username);
+        localStorage.setItem('userRole', response.user.role);
+        localStorage.setItem('userId', response.user.id);
+
+        // Show success message
+        successMessage.style.display = 'block';
+        loginButton.textContent = 'Login Successful!';
+
+        // Redirect based on role
+        setTimeout(() => {
+          switch (response.user.role) {
+            case 'requester':
+              window.location.href = 'requester-dashboard.html';
+              break;
+            case 'admin':
+              window.location.href = 'admin.html';
+              break;
+            case 'chief':
+              window.location.href = 'chief.html';
+              break;
+            case 'logistic-control':
+              window.location.href = 'logistic-control.html';
+              break;
+            case 'request-viewer':
+              window.location.href = 'request-viewer-dashboard.html';
+              break;
+            case 'supervisor':
+              window.location.href = 'in-progress-requests.html';
+              break;
+            case 'store-keeper':
+              window.location.href = 'store-keeper.html';
+              break;
+            case 'store-keeper-officer':
+              window.location.href = 'store-keeper-officer.html';
+              break;
+            default:
+              window.location.href = 'login.html';
+          }
+        }, 1000);
+
+      } catch (error) {
+        errorMessage.textContent = error.message || 'Login failed. Please try again.';
+        errorMessage.style.display = 'block';
+        loginButton.disabled = false;
+        loginButton.textContent = 'Login';
+      }
+    });
+    
+    // Check if already logged in (redirect if already authenticated)
+    document.addEventListener('DOMContentLoaded', async function() {
+      if (localStorage.getItem('authenticated') === 'true') {
+        try {
+          // Verify authentication with backend
+          await API.auth.getMe();
+          const userRole = localStorage.getItem('userRole');
+
+          // Redirect based on role
+          switch (userRole) {
+            case 'requester':
+              window.location.href = 'requester-dashboard.html';
+              break;
+            case 'request-viewer':
+              window.location.href = 'request-viewer-dashboard.html';
+              break;
+            case 'supervisor':
+              window.location.href = 'in-progress-requests.html';
+              break;
+            case 'logistic-control':
+              window.location.href = 'logistic-control.html';
+              break;
+            case 'admin':
+              window.location.href = 'admin.html';
+              break;
+            case 'chief':
+              window.location.href = 'chief.html';
+              break;
+            case 'store-keeper':
+              window.location.href = 'store-keeper.html';
+              break;
+            case 'store-keeper-officer':
+              window.location.href = 'store-keeper-officer.html';
+              break;
+            default:
+              // Clear invalid auth data
+              localStorage.clear();
+              break;
+          }
+        } catch (error) {
+          // Authentication failed, clear data
+          localStorage.clear();
+        }
+      }
+    });
+  </script>
+</body>
+</html>

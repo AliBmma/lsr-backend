@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Logistic Supervisor - Asiacell LSR Service</title>
+  <style>
+    body { 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+      margin: 0; 
+      padding: 40px; 
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      min-height: 100vh;
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      overflow: hidden;
+      border: 1px solid #e9ecef;
+    }
+    
+    header { 
+      background: white;
+      color: #495057;
+      padding: 30px;
+      text-align: center;
+      border-radius: 10px 10px 0 0;
+      border-bottom: 1px solid #e9ecef;
+    }
+    
+    .logo { 
+      font-size: 28px; 
+      font-weight: bold; 
+      color: #dc3545;
+      margin-bottom: 10px;
+    }
+    
+    h2 {
+      margin: 0;
+      font-weight: 300;
+      font-size: 22px;
+    }
+    
+    .content {
+      padding: 30px;
+    }
+    
+    .card { 
+      background: #ffffff; 
+      padding: 25px; 
+      border-radius: 15px; 
+      margin-bottom: 30px; 
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+      border: 1px solid #e0e0e0;
+    }
+    
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+    
+    .info-item {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 10px;
+      border-left: 4px solid #dc3545;
+    }
+    
+    .info-item strong {
+      color: #495057;
+      display: block;
+      margin-bottom: 5px;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .info-item p {
+      margin: 0;
+      color: #495057;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+    
+    .description-area {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 10px;
+      border-left: 4px solid #dc3545;
+      margin-top: 20px;
+    }
+    
+    .description-area strong {
+      color: #495057;
+      display: block;
+      margin-bottom: 10px;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .description-area p {
+      margin: 0;
+      color: #2c3e50;
+      font-size: 16px;
+      line-height: 1.6;
+      min-height: 60px;
+    }
+    
+    h3 { 
+      color: #495057;
+      border-bottom: 3px solid #dc3545; 
+      padding-bottom: 10px; 
+      margin-top: 0;
+      font-size: 20px;
+    }
+    
+    form { 
+      max-width: 100%; 
+    }
+    
+    label { 
+      display: block; 
+      margin-top: 15px; 
+      font-weight: 600;
+      color: #495057;
+      font-size: 14px;
+    }
+    
+    input, textarea { 
+      width: 100%; 
+      padding: 12px; 
+      margin-top: 8px; 
+      border: 2px solid #dee2e6;
+      border-radius: 6px;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      box-sizing: border-box;
+    }
+    
+    input:focus, textarea:focus {
+      outline: none;
+      border-color: #dc3545;
+      box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+    }
+    
+    button { 
+      margin-top: 20px; 
+      padding: 15px 30px; 
+      background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+      color: white; 
+      border: none; 
+      cursor: pointer; 
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+    }
+    
+    button:hover { 
+      background: linear-gradient(135deg, #20c997 0%, #17a2b8 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+    }
+    
+    .error {
+      color: #dc3545;
+      text-align: center;
+      padding: 40px;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .status-pending {
+      background: #fff3cd;
+      color: #856404;
+    }
+
+    .status-in-progress {
+      background: #cce5ff;
+      color: #004085;
+    }
+
+    .status-completed {
+      background: #d4edda;
+      color: #155724;
+    }
+
+    .status-sent-back {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    .status-transit {
+      background: #17a2b8;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">Asiacell LSR Service</div>
+      <h2>Logistic Supervisor</h2>
+    </header>
+
+    <div class="content">
+      <div id="requestDetails"></div>
+
+      <div class="card">
+        <h3>Provide Information and Approve Work</h3>
+        <form onsubmit="approveWork(event)">
+          <label>Upload Pictures:</label>
+          <input type="file" id="pictureUpload" accept="image/*" multiple required>
+
+          <label>Additional Information:</label>
+          <textarea id="additionalInfo" placeholder="Add any additional information..." rows="4"></textarea>
+
+          <button type="submit">Approve Work</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const requestId = urlParams.get('requestId');
+
+      if (!requestId) {
+        document.getElementById('requestDetails').innerHTML = '<div class="error"><p>Invalid request. No request ID provided.</p></div>';
+        return;
+      }
+
+      loadRequestDetails(requestId);
+    });
+
+    function loadRequestDetails(requestId) {
+      const requestData = JSON.parse(localStorage.getItem(`request_${requestId}`) || '{}');
+      const machineData = JSON.parse(localStorage.getItem(`machine_${requestId}`) || 'null');
+
+      if (!requestData || Object.keys(requestData).length === 0) {
+        document.getElementById('requestDetails').innerHTML = '<div class="error"><p>Request not found.</p></div>';
+        return;
+      }
+
+      let completeWorkDateDisplay = 'Not completed';
+      if (machineData && machineData.completeWorkDate) {
+        completeWorkDateDisplay = new Date(machineData.completeWorkDate).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+      }
+
+      const isTransit = requestData.isTransit;
+      let transitLabel = '';
+      if (isTransit) {
+        transitLabel = ' <span class="status-badge status-transit">Transit</span>';
+      }
+
+      document.getElementById('requestDetails').innerHTML = `
+        <div class="card">
+          <h3>Request Details${transitLabel}</h3>
+          <div class="info-grid">
+            <div class="info-item">
+              <strong>Department</strong>
+              <p>${requestData.department || 'Not specified'}</p>
+            </div>
+            <div class="info-item">
+              <strong>SR Number</strong>
+              <p>${requestData.srNumber || 'Not specified'}</p>
+            </div>
+            <div class="info-item">
+              <strong>Requester Name</strong>
+              <p>${requestData.requesterName || 'Not specified'}</p>
+            </div>
+            <div class="info-item">
+              <strong>Manager Name</strong>
+              <p>${requestData.chiefName || 'Not specified'}</p>
+            </div>
+            <div class="info-item">
+              <strong>Warehouse Officer</strong>
+              <p>${requestData.warehouseOfficer || 'Not specified'}</p>
+            </div>
+            <div class="info-item">
+              <strong>Request Date</strong>
+              <p>${requestData.requestDate ? new Date(requestData.requestDate).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : 'Not specified'}</p>
+            </div>
+            <div class="info-item">
+              <strong>Complete Work Date</strong>
+              <p>${completeWorkDateDisplay}</p>
+            </div>
+          </div>
+          <div class="description-area">
+            <strong>Selected Service Details</strong>
+            <p>${Array.isArray(requestData.serviceDetail) ? requestData.serviceDetail.join(', ') : (requestData.serviceDetail || 'None')}</p>
+          </div>
+          <div class="description-area">
+            <strong>Additional Details</strong>
+            <p>${requestData.details || 'No details provided'}</p>
+          </div>
+        </div>
+      `;
+    }
+
+    function approveWork(event) {
+      event.preventDefault();
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const requestId = urlParams.get('requestId');
+      const pictureFiles = document.getElementById('pictureUpload').files;
+      const additionalInfo = document.getElementById('additionalInfo').value;
+
+      if (pictureFiles.length === 0) {
+        alert('Please upload at least one picture.');
+        return;
+      }
+
+      const machineData = JSON.parse(localStorage.getItem(`machine_${requestId}`) || '{}');
+      const requestData = JSON.parse(localStorage.getItem(`request_${requestId}`) || '{}');
+      const isTransit = requestData.isTransit;
+      const picturesData = [];
+      let filesProcessed = 0;
+
+      for (let i = 0; i < pictureFiles.length; i++) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          picturesData.push(e.target.result); // base64 string
+          filesProcessed++;
+          if (filesProcessed === pictureFiles.length) {
+            // All files processed, update machine data
+            machineData.pictures = picturesData;
+            machineData.additionalInfo = additionalInfo;
+            machineData.status = 'work_approved';
+            machineData.approvedAt = new Date().toISOString();
+
+            localStorage.setItem(`machine_${requestId}`, JSON.stringify(machineData));
+
+            // Both transit and regular requests need work completion approval
+            if (requestData.warehouseOfficerNeeded) {
+              localStorage.setItem(`pending_store_keeper_approval_${requestId}`, JSON.stringify(machineData));
+            } else {
+              localStorage.setItem(`pending_request_${requestId}`, JSON.stringify(requestData));
+            }
+            // Remove assignment to allow work completion approval
+            localStorage.removeItem(`assignment_${requestId}`);
+            localStorage.removeItem(`assigned_viewer_${requestId}`);
+            alert(isTransit ? 'Transit request work approved successfully! Ready for work completion approval.' : 'Work approved successfully!');
+
+            window.close(); // Close the window or redirect
+          }
+        };
+        reader.readAsDataURL(pictureFiles[i]);
+      }
+    }
+  </script>
+</body>
+</html>

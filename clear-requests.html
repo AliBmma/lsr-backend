@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Clear Requests - Asiacell LSR Service</title>
+  <style>
+    body { 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+      margin: 0;
+      padding: 40px;
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      min-height: 100vh;
+      text-align: center;
+    }
+    
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      border: 1px solid #e9ecef;
+    }
+    
+    .logo { 
+      font-size: 28px; 
+      font-weight: bold; 
+      color: #dc3545;
+      margin-bottom: 20px;
+    }
+    
+    button { 
+      margin: 20px;
+      padding: 15px 30px;
+      background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    
+    button:hover { 
+      background: linear-gradient(135deg, #c82333 0%, #a71e2a 100%);
+      transform: translateY(-2px);
+    }
+    
+    .result {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 5px;
+      background: #f8f9fa;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">Asiacell LSR Service</div>
+    <h2>Clear All Requests</h2>
+    <p>This will remove all service requests from localStorage.</p>
+    
+    <button onclick="clearRequests()">Clear All Requests</button>
+    
+    <div id="result" class="result"></div>
+  </div>
+
+  <script>
+    function clearRequests() {
+      const keysToRemove = [];
+      
+      // Find all request-related keys
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key.startsWith('request_') || 
+            key.startsWith('machine_') || 
+            key.startsWith('logistic_') ||
+            key === 'requesterData' ||
+            key === 'machineData' ||
+            key === 'logisticData' ||
+            key === 'currentRequestId' ||
+            key === 'editingRequestId') {
+          keysToRemove.push(key);
+        }
+      }
+      
+      // Remove the keys
+      keysToRemove.forEach(key => {
+        localStorage.removeItem(key);
+      });
+      
+      // Show result
+      document.getElementById('result').innerHTML = `
+        <strong>Cleared ${keysToRemove.length} items:</strong><br>
+        ${keysToRemove.join('<br>') || 'No request data found'}
+      `;
+    }
+    
+    // Clear requests on page load
+    clearRequests();
+  </script>
+</body>
+</html>

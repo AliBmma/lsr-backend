@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Requester Form - Asiacell LSR Service</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <style>
+    body { 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+      margin: 0;
+      padding: 40px;
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      min-height: 100vh;
+    }
+    
+    .auth-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding: 15px 20px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      border-left: 4px solid #dc3545;
+    }
+    
+    .logo { 
+      font-size: 28px; 
+      font-weight: bold; 
+      color: #dc3545;
+    }
+    
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    
+    .welcome-text {
+      font-size: 14px;
+      color: #495057;
+    }
+    
+    .logout-btn {
+      padding: 8px 16px;
+      background: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+    
+    .logout-btn:hover {
+      background: #c82333;
+    }
+    
+    .form-container {
+      max-width: 900px;
+      margin: auto;
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      border: 1px solid #e9ecef;
+    }
+    
+    .login-prompt {
+      text-align: center;
+      padding: 40px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      margin: 20px auto;
+      max-width: 500px;
+    }
+    
+    .login-btn {
+      padding: 12px 24px;
+      background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-block;
+      margin-top: 20px;
+      transition: all 0.3s ease;
+    }
+    
+    .login-btn:hover {
+      background: linear-gradient(135deg, #c82333 0%, #a71e2a 100%);
+      transform: translateY(-2px);
+    }
+    
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    
+    .form-group {
+      margin-bottom: 15px;
+    }
+    
+    label { 
+      display: block; 
+      margin-bottom: 8px; 
+      font-weight: 600;
+      color: #495057;
+      font-size: 14px;
+    }
+    
+    input, select, textarea { 
+      width: 100%; 
+      padding: 12px;
+      border: 2px solid #dee2e6;
+      border-radius: 6px;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      box-sizing: border-box;
+    }
+    
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #dc3545;
+      box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+    }
+    
+    input[readonly] {
+      background-color: #f8f9fa;
+      border-color: #ced4da;
+    }
+    
+    #details {
+      min-height: 150px;
+      resize: vertical;
+      grid-column: 1 / -1;
+      background: #f8f9fa;
+      border: 2px solid #dc3545;
+    }
+    
+    .details-section {
+      grid-column: 1 / -1;
+      margin: 20px 0;
+    }
+    
+    .details-section label {
+      font-size: 16px;
+      color: #dc3545;
+      border-bottom: 2px solid #dc3545;
+      padding-bottom: 5px;
+      margin-bottom: 15px;
+    }
+    
+    button { 
+      grid-column: 1 / -1;
+      margin-top: 30px;
+      padding: 15px 30px;
+      background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3);
+    }
+    
+    button:hover { 
+      background: linear-gradient(135deg, #c82333 0%, #a71e2a 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4);
+    }
+    
+    .status-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      margin-left: 10px;
+    }
+    
+    .status-pending {
+      background: #fff3cd;
+      color: #856404;
+    }
+    
+    .status-in-progress {
+      background: #cce5ff;
+      color: #004085;
+    }
+    
+    .status-completed {
+      background: #dc3545;
+      color: white;
+    }
+    
+    .status-sent-back {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    .status-transit {
+      background: #17a2b8;
+      color: white;
+    }
+    
+    @media (max-width: 768px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      body {
+        padding: 20px;
+      }
+      
+      .form-container {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="authHeader" class="auth-header" style="display: none;">
+    <div class="logo">Asiacell LSR Service</div>
+    <div class="user-info">
+      <span class="welcome-text" id="welcomeText">Welcome, </span>
+      <button class="logout-btn" onclick="goToDashboard()" style="background: #007bff;">My Requests</button>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+  </div>
+
+  <header id="mainHeader" style="display: none;">
+    <h2 id="formTitle">Requester Form</h2>
+  </header>
+
+  <div id="loginPrompt" class="login-prompt">
+    <h2>Authentication Required</h2>
+    <p>Please log in to access the requester form.</p>
+    <a href="login.html" class="login-btn">Go to Login</a>
+  </div>
+
+  <div id="formContainer" class="form-container" style="display: none;">
+    <form onsubmit="saveData(event)">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Department:</label>
+          <select id="department" required>
+            <option value="">-- Select Department --</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>SR Number (auto-generated):</label>
+          <input type="text" id="srNumber" readonly>
+        </div>
+
+        <div class="form-group">
+          <label>Requester Name:</label>
+          <input type="text" id="requesterName" required>
+        </div>
+
+        <div class="form-group" id="chiefNameGroup">
+          <label>Requester Manager:</label>
+          <select id="chiefName" required>
+            <option value="">-- Select Requester Manager --</option>
+            <!-- Chief users will be populated dynamically -->
+          </select>
+        </div>
+
+        <div class="form-group" id="warehouseOfficerGroup">
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+            <input type="checkbox" id="warehouseOfficerNeeded" style="margin: 0; width: auto;" />
+            <label for="warehouseOfficerNeeded" style="display: inline; margin: 0; font-weight: 600; color: #495057; font-size: 14px;">
+              Warehouse Officer Needed
+            </label>
+          </div>
+          <div id="warehouseOfficerInputContainer" style="display:none; margin-top: 8px;">
+            <label style="display: block; margin-bottom: 8px; font-weight: 600; color: #495057; font-size: 14px;">
+              Order Number(s):
+            </label>
+            <div id="documentNumbersContainer">
+              <div class="documentNumberWrapper" style="display: flex; align-items: center; margin-bottom: 10px;">
+                <input type="text" class="documentNumberInput" style="width: 100%;" />
+                <button type="button" class="removeDocumentNumberBtn" style="margin-left: 10px; padding: 8px 16px; background: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer; display: none;">Remove</button>
+              </div>
+            </div>
+            <button type="button" id="addDocumentNumberBtn" style="margin-top: 10px; padding: 8px 16px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;">Add Another Document Number</button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Request Date:</label>
+          <input type="date" id="requestDate" required>
+        </div>
+
+        <div class="details-section">
+          <label>Service Details:</label>
+          <div id="serviceDetailsContainer">
+            <div class="serviceDetailWrapper" style="display: flex; align-items: center; margin-bottom: 10px;">
+              <select id="serviceDetailsSelect" class="serviceDetailSelect" required>
+                <option value="">-- Select Service Detail --</option>
+              </select>
+              <button type="button" class="removeServiceDetailBtn" style="margin-left: 10px; padding: 8px 16px; background: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer; display: none;">Remove</button>
+            </div>
+          </div>
+          <button type="button" id="addServiceDetailBtn" style="margin-top: 10px; padding: 8px 16px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer;">Add Another Service Detail</button>
+          <div id="selectedServiceDetailsDisplay" style="margin-top: 10px;"></div>
+          <label style="margin-top: 15px;">Additional Details:</label>
+          <textarea id="details" placeholder="Enter additional details..."></textarea>
+        </div>
+
+        <div id="noteContainer"></div>
+
+        <button type="submit" id="submitButton">Finish</button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    let selectedServiceDetails = [];
+
+    // Check authentication on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      const isAuthenticated = localStorage.getItem('authenticated') === 'true';
+      const username = localStorage.getItem('username');
+      const userRole = localStorage.getItem('userRole');
+
+      // Check if this is a transit request from request-viewer
+      const isTransitRequest = window.location.search.includes('transit=true') || localStorage.getItem('isTransitRequest') === 'true';
+
+      // Clear transit flag if not explicitly a transit request (prevents normal requester from seeing transit form)
+      if (!window.location.search.includes('transit=true')) {
+        localStorage.removeItem('isTransitRequest');
+      }
+
+      if ((isAuthenticated && username && userRole === 'requester') || (isAuthenticated && username && userRole === 'request-viewer' && isTransitRequest)) {
+        // User is authenticated as requester or request-viewer creating transit request - show the form
+        document.getElementById('authHeader').style.display = 'flex';
+        document.getElementById('mainHeader').style.display = 'block';
+        document.getElementById('formContainer').style.display = 'block';
+        document.getElementById('loginPrompt').style.display = 'none';
+        document.getElementById('welcomeText').textContent = 'Welcome, ' + username;
+
+        // Update header for transit requests
+        if (isTransitRequest) {
+          document.getElementById('formTitle').textContent = 'Create Transit Request';
+          // Hide chief name selection for transit requests
+          document.getElementById('chiefNameGroup').style.display = 'none';
+          // Remove required attribute for transit requests
+          document.getElementById('chiefName').removeAttribute('required');
+        } else {
+          // Show chief name selection for regular requests
+          document.getElementById('chiefNameGroup').style.display = 'block';
+          // Add required attribute for regular requests
+          document.getElementById('chiefName').setAttribute('required', 'required');
+        }
+
+        // Load departments and service details from Excel file and populate selects
+        loadDepartmentsAndServiceDetails().then(() => {
+          // Check if this is a new request (clear any previous editing state)
+          if (window.location.search.includes('new=true')) {
+            localStorage.removeItem('editingRequestId');
+            localStorage.removeItem('currentRequestId');
+            localStorage.removeItem('requesterData');
+          }
+
+          // Check if we're editing an existing request
+          const editingRequestId = localStorage.getItem('editingRequestId');
+
+          if (editingRequestId) {
+            // We're editing an existing request - load it for editing
+            loadRequestForEditing(editingRequestId);
+          } else {
+            // New request - clear any potential editing flags and set up new form
+            localStorage.removeItem('currentRequestId');
+            localStorage.removeItem('editingRequestId');
+
+            // New request - auto-populate requester name
+            document.getElementById('requesterName').value = username;
+
+            // Auto-generate new SR number for new requests
+            document.getElementById("srNumber").value = "SR-" + Math.floor(1000 + Math.random() * 9000);
+
+            // Set current date as default
+            const today = new Date();
+            document.getElementById("requestDate").value = today.toISOString().split('T')[0];
+
+            // Set button text based on request type
+            if (isTransitRequest) {
+              document.getElementById('submitButton').textContent = 'Submit Transit Request';
+            } else {
+              document.getElementById('submitButton').textContent = 'Submit Request';
+            }
+          }
+        }).catch(error => {
+          console.error('Failed to load service details:', error);
+        });
+      } else {
+        // User is not authenticated or wrong role - show login prompt
+        document.getElementById('loginPrompt').style.display = 'block';
+        document.getElementById('authHeader').style.display = 'none';
+        document.getElementById('mainHeader').style.display = 'none';
+        document.getElementById('formContainer').style.display = 'none';
+
+        // Clear authentication if wrong role
+        if (isAuthenticated && userRole !== 'requester' && userRole !== 'request-viewer') {
+          localStorage.removeItem('authenticated');
+          localStorage.removeItem('username');
+          localStorage.removeItem('userRole');
+        }
+      }
+    });
+
+    // Function to update the display of selected service details
+    function updateSelectedServiceDetailsDisplay() {
+      const selects = document.querySelectorAll('.serviceDetailSelect');
+      let allSelected = [];
+      selects.forEach(select => {
+        const selectedOptions = Array.from(select.selectedOptions).map(option => option.value).filter(v => v);
+        allSelected = allSelected.concat(selectedOptions);
+      });
+      allSelected = [...new Set(allSelected)]; // remove duplicates
+      const displayDiv = document.getElementById('selectedServiceDetailsDisplay');
+      if (allSelected.length > 0) {
+        displayDiv.innerHTML = '<strong>Selected Service Details:</strong><ul style="margin: 5px 0; padding-left: 20px;">' + allSelected.map(item => '<li>' + item + '</li>').join('') + '</ul>';
+      } else {
+        displayDiv.innerHTML = '';
+      }
+    }
+
+    // Function to load chief users from localStorage
+    function loadChiefUsers() {
+      const chiefUsers = [];
+
+      // Add default chief
+      chiefUsers.push('mohammed.radhwan');
+
+      // Load custom chief users from localStorage (added via diagnostic tool)
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key.startsWith('user_')) {
+          try {
+            const userData = JSON.parse(localStorage.getItem(key));
+            if (userData.role === 'chief') {
+              chiefUsers.push(userData.username);
+            }
+          } catch (e) {
+            // Skip invalid user data
+          }
+        }
+      }
+
+      // Remove duplicates
+      const uniqueChiefs = [...new Set(chiefUsers)];
+
+      // Sort alphabetically
+      uniqueChiefs.sort();
+
+      return uniqueChiefs;
+    }
+
+    // Function to load departments and service details from localStorage and Excel file
+    function loadDepartmentsAndServiceDetails() {
+      return new Promise((resolve, reject) => {
+        // Load departments from localStorage (managed by diagnostic tool)
+        const customDepartments = JSON.parse(localStorage.getItem('departments') || '[]');
+        const defaultDepartments = ['Technology', 'Finance', 'Operations', 'HR', 'Marketing', 'Sales'];
+        const deletedDefaults = JSON.parse(localStorage.getItem('deletedDefaults') || '[]');
+        const modifiedDefaults = JSON.parse(localStorage.getItem('modifiedDefaults') || '[]');
+
+        // Combine all active departments
+        let allDepartments = [...defaultDepartments, ...customDepartments];
+
+        // Remove deleted defaults
+        allDepartments = allDepartments.filter(dept => !deletedDefaults.includes(dept));
+
+        // Apply modifications to default departments
+        allDepartments = allDepartments.map(dept => {
+          const modification = modifiedDefaults.find(mod => mod.oldName === dept);
+          return modification ? modification.newName : dept;
+        });
+
+        // Remove duplicates
+        allDepartments = [...new Set(allDepartments)];
+
+        // Sort alphabetically
+        allDepartments.sort();
+
+        // Populate department select
+        const departmentSelect = document.getElementById('department');
+        allDepartments.forEach(dept => {
+          const option = document.createElement('option');
+          option.value = dept;
+          option.textContent = dept;
+          departmentSelect.appendChild(option);
+        });
+
+        // Populate chief users select
+        const chiefUsers = loadChiefUsers();
+        const chiefSelect = document.getElementById('chiefName');
+        chiefUsers.forEach(chief => {
+          const option = document.createElement('option');
+          option.value = chief;
+          option.textContent = chief;
+          chiefSelect.appendChild(option);
+        });
+
+        // Load service details from Excel file and populate select dropdown
+        fetch('Service Details select.xlsx')
+          .then(response => response.arrayBuffer())
+          .then(data => {
+            const workbook = XLSX.read(data, {type: 'array'});
+            const sheetName = workbook.SheetNames[0]; // Assuming first sheet
+            const worksheet = workbook.Sheets[sheetName];
+            const jsonData = XLSX.utils.sheet_to_json(worksheet, {header: 1});
+            const serviceDetails = jsonData.map(row => row[0]).filter(item => item); // First column, filter empty
+            const select = document.getElementById('serviceDetailsSelect');
+            serviceDetails.forEach(detail => {
+              const option = document.createElement('option');
+              option.value = detail;
+              option.textContent = detail;
+              select.appendChild(option);
+            });
+            resolve();
+          })
+          .catch(error => {
+            console.error('Error loading service details from Excel:', error);
+            reject(error);
+          });
+      });
+    }
+
+    // Function to load request data for editing
+    function loadRequestForEditing(requestId) {
+      let requestData;
+
+      if (requestId === 'current') {
+        // Load from current requesterData
+        requestData = JSON.parse(localStorage.getItem('requesterData') || '{}');
+      } else {
+        // Load from stored request
+        requestData = JSON.parse(localStorage.getItem(`request_${requestId}`) || '{}');
+      }
+
+      // Determine request status
+      let status = 'pending';
+      let statusText = 'Pending';
+      let statusClass = 'status-pending';
+
+      // Check if this is a transit request
+      const isTransit = requestData.isTransit;
+      let transitLabel = '';
+      if (isTransit) {
+        transitLabel = ' <span class="status-badge status-transit">Transit</span>';
+      }
+
+      // Check if this is a completed request (has logistic data)
+      const srNumber = requestData.srNumber;
+      const requestIdForLogistic = srNumber ? srNumber.replace('SR-', '') : requestId;
+
+      // Load machine data to check status
+      const machineData = JSON.parse(localStorage.getItem(`machine_${requestIdForLogistic}`) || 'null');
+
+      // Load logistic data to get note
+      const logisticData = JSON.parse(localStorage.getItem(`logistic_${requestIdForLogistic}`) || 'null');
+
+      if (logisticData) {
+      // Check if it's sent back to requester for editing
+      if (machineData && (machineData.status === 'sent-to-requester' || machineData.status === 'sent-back' || machineData.status === 'sent-back-from-chief' || machineData.status === 'sent-back-to-requester' || machineData.status === 'sent-back-to-viewer')) {
+        status = 'sent-back';
+        statusText = 'Sent Back';
+        statusClass = 'status-sent-back';
+      } else {
+        status = 'completed';
+        statusText = 'Completed';
+        statusClass = 'status-completed';
+      }
+      }
+
+      // Update form title with status badge
+      document.getElementById('formTitle').innerHTML = `Edit Service Request <span class="status-badge ${statusClass}">${statusText}</span>${transitLabel}`;
+
+      // Populate form fields
+      document.getElementById('department').value = requestData.department || '';
+      document.getElementById('srNumber').value = requestData.srNumber || '';
+      document.getElementById('requesterName').value = requestData.requesterName || '';
+      document.getElementById('chiefName').value = requestData.chiefName || '';
+
+      // Handle Warehouse Officer Needed checkbox
+      const warehouseOfficerNeeded = requestData.warehouseOfficerNeeded || false;
+      const warehouseOfficerCheckbox = document.getElementById('warehouseOfficerNeeded');
+      const warehouseOfficerInputContainer = document.getElementById('warehouseOfficerInputContainer');
+
+      warehouseOfficerCheckbox.checked = warehouseOfficerNeeded;
+
+      // Handle document numbers - could be string or array
+      const documentNumbers = Array.isArray(requestData.warehouseOfficer) ? requestData.warehouseOfficer : (requestData.warehouseOfficer ? [requestData.warehouseOfficer] : []);
+      const docContainer = document.getElementById('documentNumbersContainer');
+      // Clear existing inputs except the first one
+      const existingDocWrappers = docContainer.querySelectorAll('.documentNumberWrapper');
+      for (let i = 1; i < existingDocWrappers.length; i++) {
+        docContainer.removeChild(existingDocWrappers[i]);
+      }
+      // Set the first input
+      if (documentNumbers.length > 0) {
+        document.querySelector('.documentNumberInput').value = documentNumbers[0];
+      } else {
+        document.querySelector('.documentNumberInput').value = '';
+      }
+      // Add additional inputs for remaining document numbers
+      for (let i = 1; i < documentNumbers.length; i++) {
+        const inputs = docContainer.getElementsByClassName('documentNumberInput');
+        const lastInput = inputs[inputs.length - 1];
+        const lastWrapper = lastInput.closest('.documentNumberWrapper');
+        const newWrapper = lastWrapper.cloneNode(true);
+        newWrapper.querySelector('.documentNumberInput').value = documentNumbers[i];
+        const removeBtn = newWrapper.querySelector('.removeDocumentNumberBtn');
+        removeBtn.addEventListener('click', function() {
+          docContainer.removeChild(newWrapper);
+          updateDocumentNumberRemoveButtonsVisibility();
+        });
+        docContainer.appendChild(newWrapper);
+      }
+      updateDocumentNumberRemoveButtonsVisibility();
+
+      // Show/hide warehouse officer input based on checkbox state
+      if (warehouseOfficerNeeded) {
+        warehouseOfficerInputContainer.style.display = 'block';
+        // Set required on all document number inputs
+        document.querySelectorAll('.documentNumberInput').forEach(input => {
+          input.setAttribute('required', 'required');
+        });
+      } else {
+        warehouseOfficerInputContainer.style.display = 'none';
+        // Remove required from all document number inputs
+        document.querySelectorAll('.documentNumberInput').forEach(input => {
+          input.removeAttribute('required');
+        });
+      }
+      // Handle service details - could be string or array
+      const serviceDetails = Array.isArray(requestData.serviceDetail) ? requestData.serviceDetail : (requestData.serviceDetail ? [requestData.serviceDetail] : []);
+      const container = document.getElementById('serviceDetailsContainer');
+      // Clear existing selects except the first one
+      const existingWrappers = container.querySelectorAll('.serviceDetailWrapper');
+      for (let i = 1; i < existingWrappers.length; i++) {
+        container.removeChild(existingWrappers[i]);
+      }
+      // Set the first select
+      if (serviceDetails.length > 0) {
+        document.getElementById('serviceDetailsSelect').value = serviceDetails[0];
+      }
+      // Add additional selects for remaining details
+      for (let i = 1; i < serviceDetails.length; i++) {
+        const selects = container.getElementsByClassName('serviceDetailSelect');
+        const lastSelect = selects[selects.length - 1];
+        const newSelect = lastSelect.cloneNode(true);
+        newSelect.value = serviceDetails[i];
+        const wrapper = document.createElement('div');
+        wrapper.className = 'serviceDetailWrapper';
+        wrapper.style.display = 'flex';
+        wrapper.style.alignItems = 'center';
+        wrapper.style.marginBottom = '10px';
+        wrapper.appendChild(newSelect);
+        const removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.textContent = 'Remove';
+        removeBtn.className = 'removeServiceDetailBtn';
+        removeBtn.style.marginLeft = '10px';
+        removeBtn.style.padding = '8px 16px';
+        removeBtn.style.background = '#dc3545';
+        removeBtn.style.color = 'white';
+        removeBtn.style.border = 'none';
+        removeBtn.style.borderRadius = '4px';
+        removeBtn.style.cursor = 'pointer';
+        wrapper.appendChild(removeBtn);
+        removeBtn.addEventListener('click', function() {
+          container.removeChild(wrapper);
+          updateSelectedServiceDetailsDisplay();
+          updateRemoveButtonsVisibility();
+        });
+        container.appendChild(wrapper);
+      }
+      updateRemoveButtonsVisibility();
+      updateSelectedServiceDetailsDisplay();
+      document.getElementById('details').value = requestData.details || '';
+
+      // Set request date if available
+      if (requestData.requestDate) {
+        document.getElementById('requestDate').value = requestData.requestDate;
+      }
+
+      // Display note if sent back
+      const noteContainer = document.getElementById('noteContainer');
+      if (status === 'sent-back') {
+        let noteText = '';
+        let noteFrom = 'Logistic';
+        let noteFound = false;
+
+        // Check for store keeper note first (highest priority)
+        if (machineData && machineData.storeKeeperNote) {
+          noteText = machineData.storeKeeperNote;
+          noteFrom = 'Store Keeper';
+          noteFound = true;
+        }
+        // Check for chief note
+        else if (machineData && machineData.chiefNote) {
+          noteText = machineData.chiefNote;
+          noteFrom = 'Chief';
+          noteFound = true;
+        }
+        // Check for logistic note
+        else if (logisticData && logisticData.requesterNote) {
+          noteText = logisticData.requesterNote;
+          noteFrom = 'Logistic';
+          noteFound = true;
+        }
+        // Check for note in request data (sent back from store keeper)
+        else if (requestData.sentBackNote) {
+          noteText = requestData.sentBackNote;
+          noteFrom = 'Store Keeper';
+          noteFound = true;
+        }
+
+        if (noteFound && noteText) {
+          noteContainer.innerHTML = `
+            <div class="description-area" style="background: #fff3cd; border-left: 4px solid #ffc107; margin-top: 20px;">
+              <strong style="color: #856404;">📝 Note from ${noteFrom}:</strong>
+              <p style="color: #856404;">${noteText}</p>
+            </div>
+          `;
+          // Disable chief select for sent-back requests to keep the same chief
+          document.getElementById('chiefName').disabled = true;
+        } else {
+          noteContainer.innerHTML = '';
+        }
+      } else {
+        noteContainer.innerHTML = '';
+      }
+
+      // Disable form fields if request is completed and not sent back
+      if (status === 'completed') {
+        document.getElementById('department').disabled = true;
+        document.getElementById('srNumber').disabled = true;
+        document.getElementById('requesterName').disabled = true;
+        document.getElementById('chiefName').disabled = true;
+        document.getElementById('warehouseOfficer').disabled = true;
+        document.querySelectorAll('.serviceDetailSelect').forEach(select => select.disabled = true);
+        document.getElementById('details').disabled = true;
+        document.getElementById('requestDate').disabled = true;
+        document.getElementById('warehouseOfficerNeeded').disabled = true;
+
+        // Hide submit button for completed requests
+        const submitButton = document.querySelector('button[type="submit"]');
+        if (submitButton) {
+          submitButton.style.display = 'none';
+        }
+      } else if (machineData && machineData.status === 'resubmitted-to-chief') {
+        // Disable editing for requests resubmitted to chief
+        document.getElementById('department').disabled = true;
+        document.getElementById('srNumber').disabled = true;
+        document.getElementById('requesterName').disabled = true;
+        document.getElementById('chiefName').disabled = true;
+        document.getElementById('warehouseOfficer').disabled = true;
+        document.querySelectorAll('.serviceDetailSelect').forEach(select => select.disabled = true);
+        document.getElementById('details').disabled = true;
+        document.getElementById('requestDate').disabled = true;
+        document.getElementById('warehouseOfficerNeeded').disabled = true;
+
+        // Hide submit button for requests pending chief approval
+        const submitButton = document.querySelector('button[type="submit"]');
+        if (submitButton) {
+          submitButton.style.display = 'none';
+        }
+      }
+
+      // Change submit button text for sent-back requests
+      if (status === 'sent-back') {
+        const submitButton = document.getElementById('submitButton');
+        if (submitButton) {
+          submitButton.textContent = 'Confirm Edit and Send Back to Chief';
+          submitButton.style.display = 'block';
+        }
+      }
+    }
+
+    // Function to get all stored requests (copied from requests.html)
+    function getAllRequests() {
+      const requests = [];
+      
+      // Check if there's a current request from requester form
+      const currentRequestData = localStorage.getItem('requesterData');
+      if (currentRequestData) {
+        try {
+          const requestData = JSON.parse(currentRequestData);
+          requests.push({
+            id: 'current',
+            ...requestData
+          });
+        } catch (e) {
+          console.error('Error parsing current request data:', e);
+        }
+      }
+      
+      // Check localStorage for stored requests
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key.startsWith('request_')) {
+          try {
+            const requestData = JSON.parse(localStorage.getItem(key));
+            requests.push({
+              id: key.replace('request_', ''),
+              ...requestData
+            });
+          } catch (e) {
+            console.error('Error parsing request data:', e);
+          }
+        }
+      }
+      
+      return requests.sort((a, b) => new Date(b.requestDate || 0) - new Date(a.requestDate || 0));
+    }
+
+    // Auto-generate SR number
+    document.getElementById("srNumber").value = "SR-" + Math.floor(1000 + Math.random() * 9000);
+
+    // Show/hide Warehouse Officer input based on checkbox
+    document.getElementById("warehouseOfficerNeeded").addEventListener("change", function() {
+      const warehouseOfficerInputContainer = document.getElementById("warehouseOfficerInputContainer");
+      if (this.checked) {
+        warehouseOfficerInputContainer.style.display = "block";
+        // Set required on all document number inputs
+        document.querySelectorAll('.documentNumberInput').forEach(input => {
+          input.setAttribute("required", "required");
+        });
+      } else {
+        warehouseOfficerInputContainer.style.display = "none";
+        // Remove required from all document number inputs
+        document.querySelectorAll('.documentNumberInput').forEach(input => {
+          input.removeAttribute("required");
+        });
+      }
+    });
+
+    // Function to update the visibility of remove buttons for document numbers
+    function updateDocumentNumberRemoveButtonsVisibility() {
+      const wrappers = document.querySelectorAll('.documentNumberWrapper');
+      wrappers.forEach(wrapper => {
+        const removeBtn = wrapper.querySelector('.removeDocumentNumberBtn');
+        if (wrappers.length > 1) {
+          removeBtn.style.display = 'inline-block';
+        } else {
+          removeBtn.style.display = 'none';
+        }
+      });
+    }
+
+    // Add event listener for "Add Another Document Number" button
+    document.getElementById('addDocumentNumberBtn').addEventListener('click', function() {
+      const container = document.getElementById('documentNumbersContainer');
+      const inputs = container.getElementsByClassName('documentNumberInput');
+      if (inputs.length > 0) {
+        // Clone the last input wrapper
+        const lastWrapper = inputs[inputs.length - 1].closest('.documentNumberWrapper');
+        const newWrapper = lastWrapper.cloneNode(true);
+        // Clear the input value
+        const newInput = newWrapper.querySelector('.documentNumberInput');
+        newInput.value = '';
+        // Set required if warehouse officer is needed
+        if (document.getElementById("warehouseOfficerNeeded").checked) {
+          newInput.setAttribute("required", "required");
+        }
+        // Add event listener to remove button
+        const removeBtn = newWrapper.querySelector('.removeDocumentNumberBtn');
+        removeBtn.addEventListener('click', function() {
+          container.removeChild(newWrapper);
+          updateDocumentNumberRemoveButtonsVisibility();
+        });
+        container.appendChild(newWrapper);
+        updateDocumentNumberRemoveButtonsVisibility();
+      }
+    });
+
+    // Add event listener for "Add Another Service Detail" button
+    document.getElementById('addServiceDetailBtn').addEventListener('click', function() {
+      const container = document.getElementById('serviceDetailsContainer');
+      const selects = container.getElementsByClassName('serviceDetailSelect');
+      if (selects.length > 0) {
+        // Clone the last select element
+        const lastSelect = selects[selects.length - 1];
+        const newSelect = lastSelect.cloneNode(true);
+        // Reset the selected options
+        newSelect.selectedIndex = 0;
+        // Create wrapper div
+        const wrapper = document.createElement('div');
+        wrapper.className = 'serviceDetailWrapper';
+        wrapper.style.display = 'flex';
+        wrapper.style.alignItems = 'center';
+        wrapper.style.marginBottom = '10px';
+        wrapper.appendChild(newSelect);
+        // Add remove button
+        const removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.textContent = 'Remove';
+        removeBtn.className = 'removeServiceDetailBtn';
+        removeBtn.style.marginLeft = '10px';
+        removeBtn.style.padding = '8px 16px';
+        removeBtn.style.background = '#dc3545';
+        removeBtn.style.color = 'white';
+        removeBtn.style.border = 'none';
+        removeBtn.style.borderRadius = '4px';
+        removeBtn.style.cursor = 'pointer';
+        wrapper.appendChild(removeBtn);
+        // Add event listener to remove button
+        removeBtn.addEventListener('click', function() {
+          container.removeChild(wrapper);
+          updateSelectedServiceDetailsDisplay();
+          updateRemoveButtonsVisibility();
+        });
+        container.appendChild(wrapper);
+        updateRemoveButtonsVisibility();
+      }
+    });
+
+    // Function to update the visibility of remove buttons
+    function updateRemoveButtonsVisibility() {
+      const wrappers = document.querySelectorAll('.serviceDetailWrapper');
+      wrappers.forEach(wrapper => {
+        const removeBtn = wrapper.querySelector('.removeServiceDetailBtn');
+        if (wrappers.length > 1) {
+          removeBtn.style.display = 'inline-block';
+        } else {
+          removeBtn.style.display = 'none';
+        }
+      });
+    }
+
+    // Add event listener for changes on service detail selects
+    document.getElementById('serviceDetailsContainer').addEventListener('change', function(e) {
+      if (e.target.classList.contains('serviceDetailSelect')) {
+        updateSelectedServiceDetailsDisplay();
+      }
+    });
+
+    // Update saveData to collect selected options from all selects
+    function saveData(e) {
+      e.preventDefault();
+
+      // Check if this is a transit request
+      const isTransitRequest = window.location.search.includes('transit=true') || localStorage.getItem('isTransitRequest') === 'true';
+
+      // Check if this is a completed request (prevent editing)
+      const editingRequestId = localStorage.getItem('editingRequestId');
+      if (editingRequestId && editingRequestId !== 'current') {
+        const srNumber = document.getElementById("srNumber").value;
+        const requestIdForLogistic = srNumber ? srNumber.replace('SR-', '') : editingRequestId;
+
+        if (localStorage.getItem(`logistic_${requestIdForLogistic}`)) {
+          // Load machine data to check if it's sent back for editing
+          const machineData = JSON.parse(localStorage.getItem(`machine_${requestIdForLogistic}`) || 'null');
+          if (!machineData || (machineData.status !== 'sent-to-requester' && machineData.status !== 'sent-back' && machineData.status !== 'sent-back-to-requester' && machineData.status !== 'sent-back-to-viewer')) {
+            alert("This request has been completed and cannot be edited.");
+            return;
+          }
+        }
+      }
+
+      // Validate Warehouse Officer if needed
+      const warehouseOfficerNeeded = document.getElementById("warehouseOfficerNeeded").checked;
+      if (warehouseOfficerNeeded) {
+        const documentNumberInputs = document.querySelectorAll('.documentNumberInput');
+        let hasValidDocumentNumber = false;
+        for (let input of documentNumberInputs) {
+          if (input.value.trim() !== "") {
+            hasValidDocumentNumber = true;
+            break;
+          }
+        }
+        if (!hasValidDocumentNumber) {
+          alert("Please enter at least one Document Number.");
+          documentNumberInputs[0].focus();
+          return;
+        }
+      }
+
+      // Collect selected service details from all selects
+      const serviceDetailSelects = document.querySelectorAll('.serviceDetailSelect');
+      let allSelectedDetails = [];
+      serviceDetailSelects.forEach(select => {
+        const value = select.value;
+        if (value) {
+          allSelectedDetails.push(value);
+        }
+      });
+
+      // Remove duplicates
+      allSelectedDetails = [...new Set(allSelectedDetails)];
+
+      // Collect document numbers from all inputs
+      let documentNumbers = [];
+      if (warehouseOfficerNeeded) {
+        const documentNumberInputs = document.querySelectorAll('.documentNumberInput');
+        documentNumberInputs.forEach(input => {
+          const value = input.value.trim();
+          if (value) {
+            documentNumbers.push(value);
+          }
+        });
+      }
+
+      const formData = {
+        department: document.getElementById("department").value,
+        srNumber: document.getElementById("srNumber").value,
+        serviceDetail: allSelectedDetails,
+        details: document.getElementById("details").value,
+        requesterName: document.getElementById("requesterName").value,
+        chiefName: isTransitRequest ? 'N/A' : document.getElementById("chiefName").value,
+        warehouseOfficerNeeded: warehouseOfficerNeeded,
+        warehouseOfficer: documentNumbers, // Now an array
+        requestDate: document.getElementById("requestDate").value,
+        isTransit: isTransitRequest // Mark as transit request
+      };
+
+      // Check if we're editing an existing request (reuse the variable)
+
+      if (editingRequestId) {
+        // Update existing request
+        const requestId = formData.srNumber.replace('SR-', '');
+        if (editingRequestId === 'current') {
+          // Update current requester data
+          localStorage.setItem("requesterData", JSON.stringify(formData));
+
+          // Also update the stored request if it exists (find by SR number)
+          for (let i = 0; i < localStorage.length; i++) {
+            const key = localStorage.key(i);
+            if (key.startsWith('request_') && key !== 'request_current') {
+              try {
+                const storedRequest = JSON.parse(localStorage.getItem(key));
+                if (storedRequest && storedRequest.srNumber === formData.srNumber) {
+                  localStorage.setItem(key, JSON.stringify(formData));
+                  break;
+                }
+              } catch (e) {
+                console.error('Error parsing stored request:', e);
+              }
+            }
+          }
+        } else {
+          // Update stored request directly - use SR number as ID
+          localStorage.setItem(`request_${requestId}`, JSON.stringify(formData));
+        }
+
+        // Check if this was a sent-back request and update accordingly
+        const machineData = JSON.parse(localStorage.getItem(`machine_${requestId}`) || 'null');
+        if (machineData && (machineData.status === 'sent-to-requester' || machineData.status === 'sent-back' || machineData.status === 'sent-back-from-chief' || machineData.status === 'sent-back-to-requester' || machineData.status === 'sent-back-to-viewer')) {
+          // Send back to chief approval for re-approval (don't skip approval process)
+          // Add flag to indicate this is a re-submitted request
+          formData.isResubmitted = true;
+          localStorage.setItem(`pending_chief_approval_${requestId}`, JSON.stringify(formData));
+          // Remove logistic data
+          localStorage.removeItem(`logistic_${requestId}`);
+          // Clear previous approval status to allow re-approval
+          localStorage.removeItem(`chiefApproved_${requestId}`);
+          localStorage.removeItem(`approved_chief_approval_${requestId}`);
+          localStorage.removeItem(`rejected_chief_approval_${requestId}`);
+          // Update machine status to indicate it's been resubmitted
+          machineData.status = 'resubmitted-to-chief';
+          localStorage.setItem(`machine_${requestId}`, JSON.stringify(machineData));
+        }
+
+        // Clear editing flag
+        localStorage.removeItem('editingRequestId');
+
+        // Redirect based on user role
+        if (isTransitRequest) {
+          window.location.href = "request-viewer-dashboard.html";
+        } else {
+          window.location.href = "requester-dashboard.html";
+        }
+      } else {
+        // Create new request - save with proper request_ prefix for requests list
+        localStorage.setItem("requesterData", JSON.stringify(formData));
+
+        // Use the SR number as the ID to make it easier to find
+        const requestId = formData.srNumber.replace('SR-', '');
+
+        if (isTransitRequest) {
+          // Transit requests skip chief approval and go directly to logistic-control
+          localStorage.setItem(`pending_request_${requestId}`, JSON.stringify(formData));
+          localStorage.setItem(`request_${requestId}`, JSON.stringify(formData));
+
+          // Clear transit flag
+          localStorage.removeItem('isTransitRequest');
+
+          // Redirect to request-viewer dashboard
+          window.location.href = "request-viewer-dashboard.html";
+        } else {
+          // Regular requests go to chief approval
+          localStorage.setItem(`pending_chief_approval_${requestId}`, JSON.stringify(formData));
+          localStorage.setItem(`request_${requestId}`, JSON.stringify(formData));
+
+          // Clear any potential editing flags for new requests
+          localStorage.removeItem('editingRequestId');
+
+          // Redirect to requester dashboard
+          window.location.href = "requester-dashboard.html";
+        }
+      }
+    }
+
+    function goToDashboard() {
+      window.location.href = 'requester-dashboard.html';
+    }
+
+    function logout() {
+      // Clear authentication data
+      localStorage.removeItem('authenticated');
+      localStorage.removeItem('username');
+      localStorage.removeItem('userRole');
+      
+      // Redirect to login page
+      window.location.href = 'login.html';
+    }
+  </script>
+</body>
+</html>
+

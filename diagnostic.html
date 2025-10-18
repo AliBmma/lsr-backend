@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>LSR System Diagnostic - Asiacell LSR Service</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 40px;
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      overflow: hidden;
+      border: 1px solid #e9ecef;
+    }
+
+    header {
+      background: white;
+      color: #495057;
+      padding: 30px;
+      text-align: center;
+      border-radius: 10px 10px 0 0;
+      border-bottom: 1px solid #e9ecef;
+    }
+
+    .logo {
+      font-size: 28px;
+      font-weight: bold;
+      color: #dc3545;
+      margin-bottom: 10px;
+    }
+
+    .content {
+      padding: 30px;
+    }
+
+    .section {
+      margin-bottom: 30px;
+      padding: 20px;
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+      background: #f8f9fa;
+    }
+
+    .section h3 {
+      color: #dc3545;
+      margin-top: 0;
+      border-bottom: 2px solid #dc3545;
+      padding-bottom: 10px;
+    }
+
+    .diagnostic-item {
+      margin: 10px 0;
+      padding: 10px;
+      background: white;
+      border-radius: 5px;
+      border-left: 3px solid #007bff;
+    }
+
+    .error {
+      border-left-color: #dc3545;
+      background: #f8d7da;
+    }
+
+    .warning {
+      border-left-color: #ffc107;
+      background: #fff3cd;
+    }
+
+    .success {
+      border-left-color: #28a745;
+      background: #d4edda;
+    }
+
+    .info {
+      border-left-color: #17a2b8;
+      background: #d1ecf1;
+    }
+
+    .button {
+      padding: 10px 20px;
+      margin: 5px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+      color: white;
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+      color: white;
+    }
+
+    .btn-warning {
+      background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+      color: white;
+    }
+
+    .btn-danger {
+      background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+      color: white;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    .code {
+      background: #2d3748;
+      color: #e2e8f0;
+      padding: 15px;
+      border-radius: 5px;
+      font-family: 'Courier New', monospace;
+      overflow-x: auto;
+      margin: 10px 0;
+    }
+
+    .status-indicator {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-right: 8px;
+    }
+
+    .status-green { background: #28a745; }
+    .status-red { background: #dc3545; }
+    .status-yellow { background: #ffc107; }
+    .status-blue { background: #007bff; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="logo">Asiacell LSR Service</div>
+      <h2>System Diagnostic Tool</h2>
+      <p>Diagnose and fix issues with request visibility</p>
+    </header>
+
+    <div class="content">
+      <div class="section">
+        <h3>🔍 System Status</h3>
+        <div id="systemStatus"></div>
+      </div>
+
+      <div class="section">
+        <h3>🔧 SR-3216 Investigation</h3>
+        <div id="sr3216Investigation"></div>
+      </div>
+
+      <div class="section">
+        <h3>🔧 SR-6723 Warehouse Confirmation</h3>
+        <div id="sr6723Warehouse"></div>
+      </div>
+
+      <div class="section">
+        <h3>📊 Data Analysis</h3>
+        <div id="dataAnalysis"></div>
+      </div>
+
+      <div class="section">
+        <h3>🛠️ Fix Options</h3>
+        <div id="fixOptions"></div>
+      </div>
+
+      <div class="section">
+        <h3>👥 User Management</h3>
+        <div id="userManagement"></div>
+      </div>
+
+      <div class="section">
+        <h3>🏢 Department Management</h3>
+        <div id="departmentManagement"></div>
+      </div>
+
+      <div class="section">
+        <h3>📍 Location Assignment for Request-Viewers and Store Keeper Officers</h3>
+        <div id="locationAssignment"></div>
+      </div>
+
+      <div class="section">
+        <h3>📝 Manual Request Creation</h3>
+        <div id="manualCreation"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      runDiagnostics();
+    });
+
+    function runDiagnostics() {
+      checkSystemStatus();
+      investigateSR3216();
+      investigateSR6723();
+      analyzeData();
+      showFixOptions();
+      showUserManagement();
+      showDepartmentManagement();
+      showLocationAssignment();
+      showManualCreation();
+    }
+
+    function checkSystemStatus() {
+      const container = document.getElementById('systemStatus');
+      let html = '<h4>Authentication Check:</h4>';
+
+      // Check authentication
+      const isAuthenticated = localStorage.getItem('authenticated') === 'true';
+      const username = localStorage.getItem('username');
+      const userRole = localStorage.getItem('userRole');
+
+      if (isAuthenticated && username === 'zaid.nihad' && userRole === 'requester') {
+        html += '<div class="diagnostic-item success">✅ zaid.nihad is authenticated as requester</div>';
+      } else {
+        html += '<div class="diagnostic-item error">❌ Authentication issue detected</div>';
+        if (!isAuthenticated) html += '<div class="diagnostic-item info">→ Not authenticated</div>';
+        if (username !== 'zaid.nihad') html += '<div class="diagnostic-item info">→ Current user: ' + username + '</div>';
+        if (userRole !== 'requester') html += '<div class="diagnostic-item info">→ Current role: ' + userRole + '</div>';
+      }
+
+      html += '<h4>Storage Check:</h4>';
+
+      // Check localStorage size
+      let totalKeys = localStorage.length;
+      html += '<div class="diagnostic-item info">📦 Total localStorage items: ' + totalKeys + '</div>';
+
+      // Check for request patterns
+      let requestKeys = 0;
+      let pendingKeys = 0;
+      let machineKeys = 0;
+      let sentBackKeys = 0;
+
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key.startsWith('request_')) requestKeys++;
+        if (key.startsWith('pending_request_')) pendingKeys++;
+        if (key.startsWith('machine_')) machineKeys++;
+        if (key.startsWith('sent_back_')) sentBackKeys++;
+      }
+
+      html += '<div class="diagnostic-item info">📄 Request items: ' + requestKeys + '</div>';
+      html += '<div class="diagnostic-item info">⏳ Pending items: ' + pendingKeys + '</div>';
+      html += '<div class="diagnostic-item info">⚙️ Machine items: ' + machineKeys + '</div>';
+      html += '<div class="diagnostic-item info">↩️ Sent-back items: ' + sentBackKeys + '</div>';
+
+      container.innerHTML = html;
+    }
+
+    function investigateSR3216() {
+      const container = document.getElementById('sr3216Investigation');
+      let html = '<h4>SR-3216 Search Results:</h4>';
+
+      let found = false;
+      const searchResults = [];
+
+      // Search all localStorage keys for 3216
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        const value = localStorage.getItem(key);
+
+        if (key.includes('3216') || value.includes('3216') || value.includes('SR-3216')) {
+          found = true;
+          try {
+            const parsedValue = JSON.parse(value);
+            searchResults.push({
+              key: key,
+              value: parsedValue,
+              location: getLocationType(key)
+            });
+          } catch (e) {
+            searchResults.push({
+              key: key,
+              value: value,
+              location: getLocationType(key)
+            });
+          }
+        }
+      }
+
+      if (!found) {
+        html += '<div class="diagnostic-item error">❌ SR-3216 not found in any localStorage location</div>';
+        html += '<div class="diagnostic-item info">→ The request may have been deleted or never created</div>';
+      } else {
+        html += '<div class="diagnostic-item success">✅ SR-3216 found in ' + searchResults.length + ' location(s)</div>';
+        searchResults.forEach(result => {
+          html += '<div class="diagnostic-item info">';
+          html += '📍 <strong>' + result.location + ':</strong> ' + result.key;
+          if (result.value.srNumber) {
+            html += '<br>📋 SR Number: ' + result.value.srNumber;
+          }
+          if (result.value.requesterName) {
+            html += '<br>👤 Requester: ' + result.value.requesterName;
+          }
+          if (result.value.status) {
+            html += '<br>📊 Status: ' + result.value.status;
+          }
+          html += '</div>';
+        });
+      }
+
+      container.innerHTML = html;
+    }
+
+    function investigateSR6723() {
+      const container = document.getElementById('sr6723Warehouse');
+      let html = '<h4>SR-6723 Warehouse Confirmation Status:</h4>';
+
+      let found = false;
+      const searchResults = [];
+
+      // Search all localStorage keys for 6723
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        const value = localStorage.getItem(key);
+
+        if (key.includes('6723') || value.includes('6723') || value.includes('SR-6723')) {
+          found = true;
+          try {
+            const parsedValue = JSON.parse(value);
+            searchResults.push({
+              key: key,
+              value: parsedValue,
+              location: getLocationType(key)
+            });
+          } catch (e) {
+            searchResults.push({
+              key: key,
+              value: value,
+              location: getLocationType(key)
+            });
+          }
+        }
+      }
+
+      if (!found) {
+        html += '<div class="diagnostic-item error">❌ SR-6723 not found in any localStorage location</div>';
+        html += '<div class="diagnostic-item info">→ The request may have been deleted or never created</div>';
+      } else {
+        html += '<div class="diagnostic-item success">✅ SR-6723 found in ' + searchResults.length + ' location(s)</div>';
+        searchResults.forEach(result => {
+          html += '<div class="diagnostic-item info">';
+          html += '📍 <strong>' + result.location + ':</strong> ' + result.key;
+          if (result.value.srNumber) {
+            html += '<br>📋 SR Number: ' + result.value.srNumber;
+          }
+          if (result.value.requesterName) {
+            html += '<br>👤 Requester: ' + result.value.requesterName;
+          }
+          if (result.value.warehouseOfficerNeeded !== undefined) {
+            html += '<br>🏭 Warehouse Needed: ' + (result.value.warehouseOfficerNeeded ? 'Yes' : 'No');
+          }
+          if (result.value.warehouseApproved !== undefined) {
+            html += '<br>✅ Warehouse Approved: ' + (result.value.warehouseApproved ? 'Yes' : 'No');
+          }
+          if (result.value.status) {
+            html += '<br>📊 Status: ' + result.value.status;
+          }
+          html += '</div>';
+        });
+      }
+
+      // Check if warehouse confirmation is required
+      const requestData = localStorage.getItem('request_6723');
+      if (requestData) {
+        try {
+          const data = JSON.parse(requestData);
+          if (data.warehouseOfficerNeeded) {
+            html += '<div class="diagnostic-item success">✅ SR-6723 requires warehouse confirmation</div>';
+          } else {
+            html += '<div class="diagnostic-item warning">⚠️ SR-6723 does not require warehouse confirmation</div>';
+          }
+        } catch (e) {
+          html += '<div class="diagnostic-item error">❌ Error parsing request data</div>';
+        }
+      }
+
+      container.innerHTML = html;
+    }
+
+    function analyzeData() {
+      const container = document.getElementById('dataAnalysis');
+      let html = '<h4>Data Consistency Check:</h4>';
+
+      const inconsistencies = [];
+
+      // Check for orphaned machine data
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key.startsWith('machine_')) {
+          const requestId = key.replace('machine_', '');
+          const requestKey = 'request_' + requestId;
+          const pendingKey = 'pending_request_' + requestId;
+
+          if (!localStorage.getItem(requestKey) && !localStorage.getItem(pendingKey)) {
+            inconsistencies.push('Orphaned machine data: ' + key + ' (no corresponding request)');
+          }
+        }
+      }
+
+      // Check for orphaned sent-back data
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key.startsWith('sent_back_')) {
+          const requestId = key.replace('sent_back_', '');
+          const requestKey = 'request_' + requestId;
+
+          if (!localStorage.getItem(requestKey)) {
+            inconsistencies.push('Orphaned sent-back data: ' + key + ' (no corresponding request)');
+          }
+        }
+      }
+
+      if (inconsistencies.length === 0) {
+        html += '<div class="diagnostic-item success">✅ No data inconsistencies found</div>';
+      } else {
+        html += '<div class="diagnostic-item warning">⚠️ Found ' + inconsistencies.length + ' data inconsistency(ies)</div>';
+        inconsistencies.forEach(issue => {
+          html += '<div class="diagnostic-item error">❌ ' + issue + '</div>';
+        });
+      }
+
+      // Show all requests by zaid.nihad
+      html += '<h4>zaid.nihad\'s Requests:</h4>';
+      const userRequests = [];
+
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key.startsWith('request_')) {
+          try {
+            const requestData = JSON.parse(localStorage.getItem(key));
+            if (requestData.requesterName === 'zaid.nihad') {
+              userRequests.push({
+                key: key,
+                data: requestData
+              });
+            }
+          } catch (e) {
+            // Skip invalid JSON
+          }
+        }
+      }
+
+      if (userRequests.length === 0) {
+        html += '<div class="diagnostic-item warning">⚠️ zaid.nihad has no requests in the system</div>';
+      } else {
+        html += '<div class="diagnostic-item success">✅ zaid.nihad has ' + userRequests.length + ' request(s)</div>';
+        userRequests.forEach(request => {
+          html += '<div class="diagnostic-item info">';
+          html += '📋 ' + (request.data.srNumber || 'No SR Number') + ' - ' + request.key;
+          if (request.data.status) {
+            html += '<br>📊 Status: ' + request.data.status;
+          }
+          html += '</div>';
+        });
+      }
+
+      container.innerHTML = html;
+    }
+
+    function showFixOptions() {
+      const container = document.getElementById('fixOptions');
+      let html = '<h4>Available Fix Options:</h4>';
+
+      html += '<button class="button btn-warning" onclick="authenticateZaid()">🔐 Authenticate as zaid.nihad</button>';
+      html += '<button class="button btn-primary" onclick="createSR3216()">📝 Create SR-3216</button>';
+      html += '<button class="button btn-success" onclick="simulateSendBack()">↩️ Simulate Send-Back</button>';
+      html += '<button class="button btn-danger" onclick="clearAllData()">🗑️ Clear All Data</button>';
+
+      container.innerHTML = html;
+    }
+
+    function showUserManagement() {
+      const container = document.getElementById('userManagement');
+      let html = '<h4>Add New User:</h4>';
+
+      html += `
+        <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 15px 0;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+            <div>
+              <label style="display: block; margin-bottom: 5px; font-weight: 600;">Username:</label>
+              <input type="text" id="newUsername" placeholder="Enter username" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+            </div>
+            <div>
+              <label style="display: block; margin-bottom: 5px; font-weight: 600;">Password:</label>
+              <input type="password" id="newPassword" placeholder="Enter password" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+            </div>
+          </div>
+          <div style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 5px; font-weight: 600;">Role:</label>
+            <select id="newUserRole" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+              <option value="">Select Role</option>
+              <option value="requester">Requester</option>
+              <option value="request-viewer">Logistic Officer</option>
+              <option value="supervisor">Logistic Control</option>
+              <option value="logistic-control">Supervisor</option>
+              <option value="admin">Admin</option>
+              <option value="chief">Manager</option>
+              <option value="store-keeper">Store Keeper</option>
+              <option value="store-keeper-officer">Store Keeper Officer</option>
+            </select>
+          </div>
+          <button class="button btn-success" onclick="addNewUser()">➕ Add User</button>
+        </div>
+
+        <h4>Existing Users:</h4>
+        <div id="existingUsers" style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 15px 0;">
+          <!-- Existing users will be loaded here -->
+        </div>
+      `;
+
+      container.innerHTML = html;
+      loadExistingUsers();
+    }
+
+    function showDepartmentManagement() {
+      const container = document.getElementById('departmentManagement');
+      let html = '<h4>Add New Department:</h4>';
+
+      html += `
+        <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin: 15px 0;">
+          <div style="margin-bottom: 15px;">
+            <label style="display: block; margin-bottom: 5px; font-weight: 600;">Department Name:</label>
+            <input type="text" id="newDepartmentName" placeholder="Enter department name" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+          </div>
+          <button class="button btn-success" onclick="addNewDepartment()">➕ Add Department</button>
+        </div>
+
+        <h4>All Departments:</h4>
+        <div id="existingDepartments" style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 15px 0;">
+          <!-- All departments will be loaded here -->
+        </div>
+      `;
+
+      container.innerHTML = html;
+      loadExistingDepartments();
+    }
+
+    function showLocationAssignment() {
+      const container = document.getElementById('locationAssignment');
+      let html = '<h4>Assign Locations to Request-Viewer and Store Keeper Officer Users:</h4>';
+
+      // Get all request-viewer and store-keeper-officer users
+      const relevantUsers = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key.startsWith('user_')) {
+          try {
+            const userData = JSON.parse(localStorage.getItem(key));
+            if (userData.role === 'request-viewer' || userData.role === 'store-keeper-officer') {
+              relevantUsers.push(userData);
+            }
+          } catch (e) {
+            // Skip invalid user data
+          }
+        }
+      }
+
+      // Also check default request-viewer users
+      const defaultRequestViewers = [
+        { username: 'laith.talib', role: 'request-viewer' },
+        { username: 'mustafa.ismael', role: 'request-viewer' },
+        { username: 'mustafa.munaf', role: 'request-viewer' },
+        { username: 'abdulrahman.mazin', role: 'request-viewer' },
+        { username: 'yasir.fri', role: 'request-viewer' },
+        { username: 'ali.basil', role: 'request-viewer' }
+      ];
+
+      // Also check default store-keeper-officer user
+      const defaultStoreKeeperOfficers = [
+        { username: 'store.keeper.officer', role: 'store-keeper-officer' }
+      ];
+
+      // Combine and deduplicate
+      const allRelevantUsers = [...defaultRequestViewers, ...defaultStoreKeeperOfficers];
+      relevantUsers.forEach(user => {
+        if (!allRelevantUsers.some(existing => existing.username === user.username)) {
+          allRelevantUsers.push(user);
+        }
+      });
+
+      if (allRelevantUsers.length === 0) {
+        html += '<div class="diagnostic-item warning">⚠️ No request-viewer or store-keeper-officer users found</div>';
+      } else {
+        html += '<div class="diagnostic-item info">📋 Found ' + allRelevantUsers.length + ' user(s) that can be assigned locations</div>';
+
+        allRelevantUsers.forEach(user => {
+          const currentLocation = localStorage.getItem(`location_${user.username}`) || 'Not Assigned';
+          const roleDisplay = user.role === 'request-viewer' ? 'Request Viewer' : 'Store Keeper Officer';
+          const borderColor = user.role === 'request-viewer' ? '#007bff' : '#dc3545';
+
+          html += `
+            <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin: 10px 0; border-left: 4px solid ${borderColor};">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <div>
+                  <strong>${user.username}</strong>
+                  <br><small style="color: #6c757d;">${roleDisplay}</small>
+                </div>
+                <span style="color: #6c757d;">Current Location: ${currentLocation}</span>
+              </div>
+              <div style="display: flex; gap: 10px; align-items: center;">
+                <select id="location_${user.username}" style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                  <option value="">Select Location</option>
+                  <option value="Suli" ${currentLocation === 'Suli' ? 'selected' : ''}>Suli</option>
+                  <option value="Baghdad" ${currentLocation === 'Baghdad' ? 'selected' : ''}>Baghdad</option>
+                  <option value="Karbala" ${currentLocation === 'Karbala' ? 'selected' : ''}>Karbala</option>
+                  <option value="Basra" ${currentLocation === 'Basra' ? 'selected' : ''}>Basra</option>
+                  <option value="Erbil" ${currentLocation === 'Erbil' ? 'selected' : ''}>Erbil</option>
+                </select>
+                <button class="button btn-success" style="padding: 8px 16px;" onclick="assignLocation('${user.username}')">Assign</button>
+              </div>
+            </div>
+          `;
+        });
+      }
+
+      container.innerHTML = html;
+    }
+
+    function assignLocation(username) {
+      const selectElement = document.getElementById(`location_${username}`);
+      const location = selectElement.value;
+
+      if (!location) {
+        alert('❌ Please select a location first');
+        return;
+      }
+
+      localStorage.setItem(`location_${username}`, location);
+      alert(`✅ Location "${location}" assigned to ${username}`);
+      showLocationAssignment(); // Refresh the display
+    }
+
+    function showManualCreation() {
+      const container = document.getElementById('manualCreation');
+      let html = '<h4>Create SR-3216 Manually:</h4>';
+
+      html += `
+        <div style="background: #f8f9fa; padding: 15px; border-radius: 5px; margin: 10px 0;">
+          <strong>Request Details:</strong><br>
+          SR Number: SR-3216<br>
+          Requester: zaid.nihad<br>
+          Department: Technology<br>
+          Chief: mohammed.radhwan<br>
+          Status: Sent Back to Requester
+        </div>
+
+        <button class="button btn-success" onclick="createCompleteSR3216()">✅ Create Complete SR-3216 with Send-Back Status</button>
+      `;
+
+      container.innerHTML = html;
+    }
+
+    function getLocationType(key) {
+      if (key.startsWith('request_')) return 'Main Request Storage';
+      if (key.startsWith('pending_request_')) return 'Pending Requests';
+      if (key.startsWith('machine_')) return 'Machine Data';
+      if (key.startsWith('sent_back_')) return 'Sent Back Tracking';
+      if (key.startsWith('logistic_')) return 'Logistic Data';
+      return 'Other';
+    }
+
+    // Fix Functions
+    function authenticateZaid() {
+      localStorage.setItem('authenticated', 'true');
+      localStorage.setItem('username', 'zaid.nihad');
+      localStorage.setItem('userRole', 'requester');
+      alert('✅ Authenticated as zaid.nihad');
+      location.reload();
+    }
+
+    function createSR3216() {
+      const requestData = {
+        department: 'Technology',
+        srNumber: 'SR-3216',
+        requesterName: 'zaid.nihad',
+        chiefName: 'mohammed.radhwan',
+        requestDate: new Date().toISOString().split('T')[0],
+        serviceDetail: ['Network Setup'],
+        details: 'Initial request for SR-3216'
+      };
+
+      localStorage.setItem('request_3216', JSON.stringify(requestData));
+      alert('✅ Created SR-3216 in main request storage');
+      location.reload();
+    }
+
+    function simulateSendBack() {
+      const machineData = {
+        requesterNote: 'Please review and update the service requirements',
+        status: 'sent-to-requester',
+        sentBackBy: 'logistic-control',
+        sentBackDate: new Date().toISOString()
+      };
+
+      localStorage.setItem('machine_3216', JSON.stringify(machineData));
+      localStorage.setItem('sent_back_3216', JSON.stringify({
+        department: 'Technology',
+        srNumber: 'SR-3216',
+        requesterName: 'zaid.nihad',
+        chiefName: 'mohammed.radhwan'
+      }));
+
+      alert('✅ Simulated send-back for SR-3216');
+      location.reload();
+    }
+
+    function createCompleteSR3216() {
+      // Create the main request
+      const requestData = {
+        department: 'Technology',
+        srNumber: 'SR-3216',
+        requesterName: 'zaid.nihad',
+        chiefName: 'mohammed.radhwan',
+        requestDate: new Date().toISOString().split('T')[0],
+        serviceDetail: ['Network Setup'],
+        details: 'Request sent back for modifications'
+      };
+
+      localStorage.setItem('request_3216', JSON.stringify(requestData));
+
+      // Create machine data with sent-back status
+      const machineData = {
+        requesterNote: 'Please review and update the service requirements. The network setup needs to be modified.',
+        status: 'sent-to-requester',
+        sentBackBy: 'logistic-control',
+        sentBackDate: new Date().toISOString()
+      };
+
+      localStorage.setItem('machine_3216', JSON.stringify(machineData));
+
+      // Create sent-back tracking
+      localStorage.setItem('sent_back_3216', JSON.stringify(requestData));
+
+      alert('✅ Created complete SR-3216 with send-back status!\n\nzaid.nihad should now be able to see SR-3216 in their dashboard.');
+      location.reload();
+    }
+
+    function addNewUser() {
+      const username = document.getElementById('newUsername').value.trim();
+      const password = document.getElementById('newPassword').value.trim();
+      const role = document.getElementById('newUserRole').value;
+
+      if (!username || !password || !role) {
+        alert('❌ Please fill in all fields (username, password, and role)');
+        return;
+      }
+
+      // Check if user already exists
+      const existingUsers = getExistingUsers();
+      if (existingUsers.some(user => user.username === username)) {
+        alert('❌ User with this username already exists!');
+        return;
+      }
+
+      // Add user to localStorage
+      const userKey = `user_${username}`;
+      const userData = {
+        username: username,
+        password: password,
+        role: role,
+        createdAt: new Date().toISOString()
+      };
+
+      localStorage.setItem(userKey, JSON.stringify(userData));
+
+      alert(`✅ User "${username}" with role "${role}" has been added successfully!`);
+
+      // Clear form
+      document.getElementById('newUsername').value = '';
+      document.getElementById('newPassword').value = '';
+      document.getElementById('newUserRole').value = '';
+
+      // Reload existing users list
+      loadExistingUsers();
+    }
+
+    function loadExistingUsers() {
+      const container = document.getElementById('existingUsers');
+      const users = getExistingUsers();
+
+      if (users.length === 0) {
+        container.innerHTML = '<div class="diagnostic-item info">📝 No custom users added yet. Only default users from login.html are available.</div>';
+        return;
+      }
+
+      let html = '<div style="display: grid; gap: 10px;">';
+      users.forEach(user => {
+        const roleDisplay = user.role.charAt(0).toUpperCase() + user.role.slice(1).replace('-', ' ');
+        html += `
+          <div class="diagnostic-item info" style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <strong>${user.username}</strong> - ${roleDisplay}
+              <br><small style="color: #6c757d;">Created: ${new Date(user.createdAt).toLocaleDateString()}</small>
+            </div>
+            <button class="button btn-danger" style="padding: 4px 8px; font-size: 12px;" onclick="deleteUser('${user.username}')">🗑️ Delete</button>
+          </div>
+        `;
+      });
+      html += '</div>';
+
+      container.innerHTML = html;
+    }
+
+    function getExistingUsers() {
+      const users = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key.startsWith('user_')) {
+          try {
+            const userData = JSON.parse(localStorage.getItem(key));
+            users.push(userData);
+          } catch (e) {
+            console.error('Error parsing user data:', e);
+          }
+        }
+      }
+      return users.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    }
+
+    function deleteUser(username) {
+      if (confirm(`⚠️ Are you sure you want to delete user "${username}"?`)) {
+        const userKey = `user_${username}`;
+        localStorage.removeItem(userKey);
+        alert(`✅ User "${username}" has been deleted.`);
+        loadExistingUsers();
+      }
+    }
+
+    function addNewDepartment() {
+      const departmentName = document.getElementById('newDepartmentName').value.trim();
+
+      if (!departmentName) {
+        alert('❌ Please enter a department name');
+        return;
+      }
+
+      // Get existing departments
+      const existingDepartments = getExistingDepartments();
+
+      // Check if department already exists
+      if (existingDepartments.includes(departmentName)) {
+        alert('❌ Department with this name already exists!');
+        return;
+      }
+
+      // Add department to the list
+      existingDepartments.push(departmentName);
+      localStorage.setItem('departments', JSON.stringify(existingDepartments));
+
+      alert(`✅ Department "${departmentName}" has been added successfully!`);
+
+      // Clear form
+      document.getElementById('newDepartmentName').value = '';
+
+      // Reload existing departments list
+      loadExistingDepartments();
+    }
+
+    function loadExistingDepartments() {
+      const container = document.getElementById('existingDepartments');
+      const customDepartments = getExistingDepartments();
+      const defaultDepartments = ['Technology', 'Finance', 'Operations', 'HR', 'Marketing', 'Sales'];
+
+      // Combine all departments
+      const allDepartments = [...defaultDepartments, ...customDepartments];
+
+      if (allDepartments.length === 0) {
+        container.innerHTML = '<div class="diagnostic-item info">📝 No departments available.</div>';
+        return;
+      }
+
+      let html = '<div style="display: grid; gap: 10px;">';
+      // Get deleted defaults
+      const deletedDefaults = JSON.parse(localStorage.getItem('deletedDefaults') || '[]');
+      const modifiedDefaults = JSON.parse(localStorage.getItem('modifiedDefaults') || '[]');
+
+      allDepartments.forEach(department => {
+        // Skip deleted default departments
+        if (deletedDefaults.includes(department)) {
+          return;
+        }
+
+        // Check if this is a modified default department
+        const modification = modifiedDefaults.find(mod => mod.oldName === department);
+        const displayName = modification ? modification.newName : department;
+
+        const isDefault = defaultDepartments.includes(department);
+        const backgroundColor = isDefault ? '#e8f5e8' : '#f8f9fa';
+        const borderColor = isDefault ? '#28a745' : '#007bff';
+        const typeLabel = isDefault ? ' (Default)' : ' (Custom)';
+
+        html += `
+          <div class="diagnostic-item info" style="display: flex; justify-content: space-between; align-items: center; background: ${backgroundColor}; border-left-color: ${borderColor};">
+            <div>
+              <strong>${displayName}</strong><small style="color: #6c757d;">${typeLabel}</small>
+            </div>
+            <div style="display: flex; gap: 5px;">
+              <button class="button btn-warning" style="padding: 4px 8px; font-size: 12px;" onclick="editDepartment('${displayName}', ${isDefault})">✏️ Edit</button>
+              <button class="button btn-danger" style="padding: 4px 8px; font-size: 12px;" onclick="deleteDepartment('${displayName}', ${isDefault})">🗑️ Delete</button>
+            </div>
+          </div>
+        `;
+      });
+      html += '</div>';
+
+      container.innerHTML = html;
+    }
+
+    function getExistingDepartments() {
+      const departmentsData = localStorage.getItem('departments');
+      if (departmentsData) {
+        try {
+          return JSON.parse(departmentsData);
+        } catch (e) {
+          console.error('Error parsing departments data:', e);
+          return [];
+        }
+      }
+      return [];
+    }
+
+    function editDepartment(departmentName, isDefault) {
+      const newName = prompt(`Edit department name:`, departmentName);
+      if (!newName || newName.trim() === '' || newName.trim() === departmentName) {
+        return;
+      }
+
+      const trimmedName = newName.trim();
+
+      if (isDefault) {
+        // Editing a default department - need to update the default list
+        if (confirm(`⚠️ "${departmentName}" is a default department. Editing it will modify the default list. Continue?`)) {
+          const defaultDepartments = ['Technology', 'Finance', 'Operations', 'HR', 'Marketing', 'Sales'];
+          const customDepartments = getExistingDepartments();
+
+          // Check if new name conflicts with existing departments
+          if (defaultDepartments.includes(trimmedName) || customDepartments.includes(trimmedName)) {
+            alert('❌ Department name already exists!');
+            return;
+          }
+
+          // Update default departments (this would require storing modified defaults)
+          const modifiedDefaults = JSON.parse(localStorage.getItem('modifiedDefaults') || '[]');
+          modifiedDefaults.push({ oldName: departmentName, newName: trimmedName });
+          localStorage.setItem('modifiedDefaults', JSON.stringify(modifiedDefaults));
+
+          alert(`✅ Default department "${departmentName}" has been renamed to "${trimmedName}".`);
+          loadExistingDepartments();
+        }
+      } else {
+        // Editing a custom department
+        const customDepartments = getExistingDepartments();
+
+        // Check if new name conflicts with existing departments
+        const defaultDepartments = ['Technology', 'Finance', 'Operations', 'HR', 'Marketing', 'Sales'];
+        if (defaultDepartments.includes(trimmedName) || customDepartments.includes(trimmedName)) {
+          alert('❌ Department name already exists!');
+          return;
+        }
+
+        const updatedDepartments = customDepartments.map(dept => dept === departmentName ? trimmedName : dept);
+        localStorage.setItem('departments', JSON.stringify(updatedDepartments));
+        alert(`✅ Department "${departmentName}" has been renamed to "${trimmedName}".`);
+        loadExistingDepartments();
+      }
+    }
+
+    function deleteDepartment(departmentName, isDefault) {
+      if (isDefault) {
+        if (confirm(`⚠️ "${departmentName}" is a default department. Deleting it will remove it from the default list. Continue?`)) {
+          // Mark as deleted in modified defaults
+          const deletedDefaults = JSON.parse(localStorage.getItem('deletedDefaults') || '[]');
+          if (!deletedDefaults.includes(departmentName)) {
+            deletedDefaults.push(departmentName);
+            localStorage.setItem('deletedDefaults', JSON.stringify(deletedDefaults));
+          }
+          alert(`✅ Default department "${departmentName}" has been removed.`);
+          loadExistingDepartments();
+        }
+      } else {
+        if (confirm(`⚠️ Are you sure you want to delete custom department "${departmentName}"?`)) {
+          const departments = getExistingDepartments();
+          const updatedDepartments = departments.filter(dept => dept !== departmentName);
+          localStorage.setItem('departments', JSON.stringify(updatedDepartments));
+          alert(`✅ Department "${departmentName}" has been deleted.`);
+          loadExistingDepartments();
+        }
+      }
+    }
+
+    function clearAllData() {
+      if (confirm('⚠️ This will clear ALL data from localStorage. Are you sure?')) {
+        localStorage.clear();
+        alert('🗑️ All data cleared. Page will reload.');
+        location.reload();
+      }
+    }
+  </script>
+</body>
+</html>

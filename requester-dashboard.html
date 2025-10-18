@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Requests - Asiacell LSR Service</title>
+  <style>
+    body { 
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+      margin: 0; 
+      padding: 40px; 
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      min-height: 100vh;
+    }
+    
+    .auth-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding: 15px 20px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      border-left: 4px solid #dc3545;
+    }
+    
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    
+    .welcome-text {
+      font-size: 14px;
+      color: #495057;
+    }
+    
+    .logout-btn {
+      padding: 8px 16px;
+      background: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+    
+    .logout-btn:hover {
+      background: #c82333;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4极 20px rgba(0,0,0,0.1);
+      overflow: hidden;
+      border: 1px solid #e9ecef;
+    }
+    
+    header { 
+      background: white;
+      color: #495057;
+      padding: 30px;
+      text-align: center;
+      border-radius: 10px 10px 0 0;
+      border-bottom: 1px solid #e9ecef;
+    }
+    
+    .logo { 
+      font-size: 28px; 
+      font-weight: bold; 
+      color: #dc3545;
+      margin-bottom: 10px;
+    }
+    
+    h2 {
+      margin: 0;
+      font-weight: 300;
+      font-size: 22px;
+    }
+    
+    .content {
+      padding: 30px;
+    }
+    
+    .card { 
+      background: #ffffff; 
+      padding: 25px; 
+      border-radius: 15px; 
+      margin-bottom: 30px; 
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+      border: 1px solid #e0e0e0;
+    }
+    
+    .requests-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+    
+    .request-item {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 10px;
+      border-left: 4px solid #dc3545;
+      border: 2px solid #e9ecef;
+    }
+    
+    .request-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #dee2e6;
+    }
+    
+    .sr-number {
+      font-weight: bold;
+      color: #dc3545;
+      font-size: 16px;
+    }
+    
+    .status-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    
+    .status-pending {
+      background: #fff3cd;
+      color: #856404;
+    }
+    
+    .status-in-progress {
+      background: #cce5ff;
+      color: #004085;
+    }
+    
+    .status-completed {
+      background: #d4edda;
+      color: #155724;
+    }
+    
+    .status-sent-back {
+      background: #f8d7da;
+      color: #721c24;
+    }
+
+    .transit-label {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+      color: white;
+      margin-left: 8px;
+      border: 1px solid #138496;
+    }
+    
+    .request-details {
+      margin-bottom: 15px;
+    }
+    
+    .request-detail {
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+    }
+    
+    .request-detail strong {
+      color: #495057;
+      min-width: 120px;
+      font-size: 14px;
+    }
+    
+    .request-detail span {
+      color: #495057;
+      font-size: 14px;
+    }
+    
+    .action-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+    }
+    
+    .btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-edit {
+      background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+      color: white;
+    }
+    
+    .btn-edit:hover {
+      background: linear-gradient(135deg, #0056b3 0%, #004085 100%);
+      transform: translateY(-2px);
+    }
+    
+    .btn-view {
+      background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+      color: white;
+    }
+    
+    .btn-view:hover {
+      background: linear-gradient(135deg, #495057 0%, #343a40 100%);
+      transform: translateY(-2px);
+    }
+    
+    .btn-send-back {
+      background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-send-back:hover {
+      background: linear-gradient(135deg, #e0a800 0%, #c69500 100%);
+      transform: translateY(-2px);
+    }
+    
+    .btn-send-to-viewer {
+      background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-send-to-viewer:hover {
+      background: linear-gradient(135deg, #138496 0%, #117a8b 100%);
+      transform: translateY(-2px);
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #6c757d;
+    }
+    
+    .empty-state h3 {
+      color: #495057;
+      margin-bottom: 10px;
+    }
+    
+    .empty-state p {
+      margin-bottom: 20px;
+    }
+    
+    .new-request-btn {
+      display: inline-block;
+      padding: 12px 24px;
+      background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    
+    .new-request-btn:hover {
+      background: linear-gradient(135deg, #c82333 0%, #a71e2a 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(220, 53, 69, 0.4);
+    }
+    
+    h3 { 
+      color: #495057;
+      border-bottom: 3px solid #dc3545; 
+      padding-bottom: 10px; 
+      margin-top: 0;
+      font-size: 20px;
+    }
+    
+    @media (max-width: 768px) {
+      body {
+        padding: 20px;
+      }
+      
+      .requests-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .content {
+        padding: 20px;
+      }
+      
+      .request-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+      
+      .action-buttons {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-header" style="display: none;">
+    <div class="logo">Asiacell LSR Service</div>
+    <div class="user-info">
+      <span class="welcome-text" id="welcomeText">Welcome, </span>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+  </div>
+
+  <div class="container">
+    <header>
+      <div class="logo">Asiacell LSR Service</div>
+      <h2>My Service Requests</h2>
+    </header>
+
+    <div class="content">
+      <div class="card">
+        <h3>My Requests</h3>
+        <div style="margin-bottom: 20px;">
+          <input type="text" id="searchInput" placeholder="Search by SR Number..." style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px;">
+        </div>
+        <div id="requestsList" class="requests-grid">
+          <!-- Requests will be dynamically populated here -->
+        </div>
+      </div>
+      
+      <div style="text-align: center; margin-top: 30px;">
+        <a href="requester.html?new=true" class="new-request-btn">Create New Request</a>
+        <button onclick="clearAllRequests()" style="margin-left: 20px; padding: 12px 24px; background: linear-gradient(135deg, #6c757d 0%, #495057 100%); color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 6px 20px rgba(108, 117, 125, 0.4)';" onmouseout="this.style.transform='none'; this.style.boxShadow='none';">Clear All Requests</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Check authentication on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      const isAuthenticated = localStorage.getItem('authenticated') === 'true';
+      const username = localStorage.getItem('username');
+      const userRole = localStorage.getItem('userRole');
+      
+      if (!isAuthenticated || !username || userRole !== 'requester') {
+        // User is not authenticated as requester - redirect to login
+        localStorage.removeItem('authenticated');
+        localStorage.removeItem('username');
+        localStorage.removeItem('userRole');
+        window.location.href = 'login.html';
+        return;
+      }
+      
+      // Show auth header with user info
+      document.querySelector('.auth-header').style.display = 'flex';
+      document.getElementById('welcomeText').textContent = 'Welcome, ' + username;
+      
+      // Load and display the user's requests
+      loadUserRequests(username);
+
+      // Add search functionality
+      const searchInput = document.getElementById('searchInput');
+      searchInput.addEventListener('input', function() {
+        loadUserRequests(username, this.value.trim());
+      });
+
+      // Removed setInterval to prevent automatic refresh
+      // setInterval(() => {
+      //   loadUserRequests(username);
+      // }, 3000);
+    });
+
+    function logout() {
+      // Clear authentication data
+      localStorage.removeItem('authenticated');
+      localStorage.removeItem('username');
+      localStorage.removeItem('userRole');
+      
+      // Redirect to login page
+      window.location.href = 'login.html';
+    }
+
+    // Function to get all requests made by the current user
+    function loadUserRequests(username, searchTerm = '') {
+      const userRequests = [];
+      const seenSrNumbers = new Set();
+
+      // Normalize search term for case-insensitive comparison
+      const normalizedSearchTerm = searchTerm.toLowerCase();
+
+      // Check localStorage for stored requests
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key.startsWith('request_')) {
+          try {
+            const requestData = JSON.parse(localStorage.getItem(key));
+            // Only include requests made by the current user and avoid duplicates
+            if (requestData.requesterName === username && !seenSrNumbers.has(requestData.srNumber)) {
+              // If search term is provided, filter by SR number
+              if (normalizedSearchTerm === '' || (requestData.srNumber && requestData.srNumber.toLowerCase().includes(normalizedSearchTerm))) {
+                userRequests.push({
+                  id: key.replace('request_', ''),
+                  ...requestData
+                });
+                seenSrNumbers.add(requestData.srNumber);
+              }
+            }
+          } catch (e) {
+            console.error('Error parsing request data:', e);
+          }
+        }
+      }
+
+      renderUserRequests(userRequests.sort((a, b) => new Date(b.requestDate || 0) - new Date(a.requestDate || 0)));
+    }
+
+    // Function to render user's requests
+    function renderUserRequests(requests) {
+      const container = document.getElementById('requestsList');
+      const userRole = localStorage.getItem('userRole');
+
+      if (requests.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <h3>No Requests Found</h3>
+            <p>You haven't created any service requests yet.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = requests.map(request => {
+        const requestDate = request.requestDate ? new Date(request.requestDate).toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        }) : 'Not specified';
+
+        // Determine status based on available data
+        let status = 'pending';
+        let statusText = 'Pending';
+        let statusClass = 'status-pending';
+        let canEdit = false; // Default to not editable
+        let hasNote = false;
+        let noteText = '';
+
+        // Load machine and logistic data
+        const machineDataStr = localStorage.getItem(`machine_${request.id}`);
+        const logisticDataStr = localStorage.getItem(`logistic_${request.id}`);
+        let machineData = null;
+        let logisticData = null;
+
+        if (machineDataStr) {
+          try {
+            machineData = JSON.parse(machineDataStr);
+          } catch (e) {
+            console.error('Error parsing machine data:', e);
+          }
+        }
+
+        if (logisticDataStr) {
+          try {
+            logisticData = JSON.parse(logisticDataStr);
+          } catch (e) {
+            console.error('Error parsing logistic data:', e);
+          }
+        }
+
+        // Check for notes in machine or logistic data
+        if (machineData && machineData.storeKeeperNote && machineData.storeKeeperNote.trim() !== '') {
+          hasNote = true;
+          noteText = machineData.storeKeeperNote;
+        } else if (machineData && machineData.requesterNote && machineData.requesterNote.trim() !== '') {
+          hasNote = true;
+          noteText = machineData.requesterNote;
+        } else if (machineData && machineData.chiefNote && machineData.chiefNote.trim() !== '') {
+          hasNote = true;
+          noteText = machineData.chiefNote;
+        } else if (logisticData && logisticData.requesterNote && logisticData.requesterNote.trim() !== '') {
+          hasNote = true;
+          noteText = logisticData.requesterNote;
+        }
+
+        // Check if request is sent back to requester
+        if (machineData && (machineData.status === 'sent-to-requester' || machineData.status === 'sent-back' || machineData.status === 'sent-back-from-chief' || machineData.status === 'sent-back-to-requester' || machineData.status === 'sent-back-to-viewer')) {
+          status = 'sent-back';
+          statusText = 'Sent Back';
+          statusClass = 'status-sent-back';
+          if (userRole === 'requester') canEdit = true; // Requester can edit sent-back requests
+        } else if (machineData && machineData.status === 'resubmitted-to-chief') {
+          status = 'pending-chief-approval';
+          statusText = 'Pending Manager Approval';
+          statusClass = 'status-pending';
+          canEdit = false; // Cannot edit once resubmitted to chief
+        }
+
+        if (localStorage.getItem(`machine_${request.id}`) && status === 'pending') {
+          status = 'in-progress';
+          statusText = 'In Progress';
+          statusClass = 'status-in-progress';
+          canEdit = false; // Cannot edit in-progress requests
+        }
+
+        if (localStorage.getItem(`logistic_${request.id}`) && status !== 'sent-back') {
+          status = 'completed';
+          statusText = 'Completed';
+          statusClass = 'status-completed';
+          canEdit = false; // Cannot edit completed requests
+        }
+        
+        return `
+          <div class="request-item">
+        <div class="request-header">
+          <div class="sr-number">${request.srNumber || 'SR-N/A'}</div>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div class="status-badge ${statusClass}">${statusText}</div>
+            ${request.isTransit ? `<div class="transit-label">Transit</div>` : ''}
+            ${hasNote ? `
+              <div class="status-badge" style="background: #fff3cd; color: #856404; border: 1px solid #ffc107;">
+                📝 Has Note
+              </div>
+            ` : ''}
+          </div>
+        </div>
+            
+            <div class="request-details">
+              <div class="request-detail">
+                <strong>Department:</strong>
+                <span>${request.department || 'Not specified'}</span>
+              </div>
+              
+              <div class="request-detail">
+                <strong>SR Number:</strong>
+                <span>${request.srNumber || 'Not specified'}</span>
+              </div>
+              
+              <div class="request-detail">
+                <strong>Manager:</strong>
+                <span>${request.chiefName || 'Not specified'}</span>
+              </div>
+              
+              <div class="request-detail">
+                <strong>Request Date:</strong>
+                <span>${requestDate}</span>
+              </div>
+              
+              <div class="request-detail">
+                <strong>Status:</strong>
+                <span>${statusText}</span>
+              </div>
+              
+              ${hasNote ? `
+                <div class="request-detail" style="grid-column: 1 / -1; background: #fff3cd; border-left: 4px solid #ffc107; padding: 10px; margin-top: 10px; border-radius: 5px;">
+                  <strong style="color: #856404;">📝 Note from ${machineData && machineData.storeKeeperNote ? 'Store Keeper' : machineData && machineData.chiefNote ? 'Chief' : 'Request Viewer'}:</strong>
+                  <span style="color: #856404;">${noteText}</span>
+                </div>
+              ` : ''}
+            </div>
+            
+            <div class="action-buttons">
+              ${canEdit ? `<button class="btn btn-edit" onclick="editRequest('${request.id}')">Edit Request</button>` : ''}
+              <button class="btn btn-view" onclick="viewRequest('${request.id}')">View Details</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Function to edit a request
+    function editRequest(requestId) {
+      // Load the request data and navigate to requester form for editing
+      const requestData = JSON.parse(localStorage.getItem(`request_${requestId}`));
+      localStorage.setItem('requesterData', JSON.stringify(requestData));
+      localStorage.setItem('editingRequestId', requestId);
+      window.location.href = 'requester.html';
+    }
+
+    // Function to view request details
+    function viewRequest(requestId) {
+      // Check if this request was sent back from logistic (has status: 'sent-back' or 'sent-to-requester' in machine data)
+      let isSentBackRequest = false;
+      let isSentToRequester = false;
+      const machineDataStr = localStorage.getItem(`machine_${requestId}`);
+      if (machineDataStr) {
+        try {
+          const machineData = JSON.parse(machineDataStr);
+          isSentBackRequest = machineData.status === 'sent-back' || machineData.status === 'sent-to-requester' || machineData.status === 'sent-back-from-chief' || machineData.status === 'sent-back-to-requester' || machineData.status === 'sent-back-to-viewer';
+          isSentToRequester = machineData.status === 'sent-to-requester';
+          console.log('Machine data status:', machineData.status, 'Is sent back:', isSentBackRequest, 'Is sent to requester:', isSentToRequester);
+        } catch (e) {
+          console.error('Error parsing machine data:', e);
+          isSentBackRequest = false;
+          isSentToRequester = false;
+        }
+      }
+
+      // Check if this request has logistic data (completed request)
+      const hasLogisticData = localStorage.getItem(`logistic_${requestId}`);
+
+      // Check sent-back status FIRST - this takes priority over completed status
+      if (isSentToRequester || isSentBackRequest) {
+        console.log('Navigating to requester.html - request was sent back to requester');
+        // This request was sent back to requester - navigate to requester form for editing
+        const requestData = JSON.parse(localStorage.getItem(`request_${requestId}`));
+
+        // Store the current request data for editing
+        localStorage.setItem('currentRequestId', requestId);
+        localStorage.setItem('editingRequestId', requestId);
+        localStorage.setItem('requesterData', JSON.stringify(requestData));
+
+        window.location.href = 'requester.html';
+      // Note: isSentBackRequest now includes sent-to-requester, so we handle it above
+        // Check user role to determine where to redirect
+        const userRole = localStorage.getItem('userRole');
+        console.log('User role:', userRole);
+        
+        if (userRole === 'supervisor') {
+          console.log('Navigating to final.html - user is supervisor');
+          // This is a completed request and user is supervisor - navigate to final.html
+          const requestData = JSON.parse(localStorage.getItem(`request_${requestId}`));
+          const logisticData = JSON.parse(localStorage.getItem(`logistic_${requestId}`));
+          
+          // Store the data for final.html
+          localStorage.setItem('currentRequestId', requestId);
+          localStorage.setItem('requesterData', JSON.stringify(requestData));
+          localStorage.setItem('logisticData', JSON.stringify(logisticData));
+          
+          window.location.href = 'final.html';
+        } else {
+          console.log('Navigating to request-viewer.html - user is not supervisor, showing details without prices');
+          // Non-supervisor viewing completed request - show details without prices
+          const requestData = JSON.parse(localStorage.getItem(`request_${requestId}`));
+          const machineData = localStorage.getItem(`machine_${requestId}`) ? JSON.parse(localStorage.getItem(`machine_${requestId}`)) : null;
+          
+          // Store the current request data for the viewer
+          localStorage.setItem('currentRequestId', requestId);
+          localStorage.setItem('requesterData', JSON.stringify(requestData));
+          
+          if (machineData) {
+            localStorage.setItem('machineData', JSON.stringify(machineData));
+          }
+          
+          window.location.href = 'request-viewer.html';
+        }
+      } else {
+        // This is an incomplete request - navigate based on user role
+        const requestData = JSON.parse(localStorage.getItem(`request_${requestId}`));
+        const machineData = localStorage.getItem(`machine_${requestId}`) ? JSON.parse(localStorage.getItem(`machine_${requestId}`)) : null;
+        
+        // Store the current request data
+        localStorage.setItem('currentRequestId', requestId);
+        localStorage.setItem('requesterData', JSON.stringify(requestData));
+        
+        if (machineData) {
+          localStorage.setItem('machineData', JSON.stringify(machineData));
+        }
+        
+        // Redirect based on user role
+        const userRole = localStorage.getItem('userRole');
+        if (userRole === 'requester') {
+          window.location.href = 'requester.html';
+        } else if (userRole === 'request-viewer') {
+          window.location.href = 'request-viewer.html';
+        } else {
+          window.location.href = 'login.html';
+        }
+      }
+    }
+
+    // Function to clear all requests from localStorage
+    function clearAllRequests() {
+      if (confirm('Are you sure you want to clear ALL requests? This action cannot be undone.')) {
+        const keysToRemove = [];
+        
+        // Find all request-related keys
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (key.startsWith('request_') || 
+              key.startsWith('machine_') || 
+              key.startsWith('logistic_') ||
+              key === 'requesterData' ||
+              key === 'machineData' ||
+              key === 'logisticData' ||
+              key === 'currentRequestId' ||
+              key === 'editingRequestId') {
+            keysToRemove.push(key);
+          }
+        }
+        
+        // Remove the keys
+        keysToRemove.forEach(key => {
+          localStorage.removeItem(key);
+        });
+        
+        // Reload the page to show empty state
+        alert(`Cleared ${keysToRemove.length} request items. Page will now reload.`);
+        window.location.reload();
+      }
+    }
+
+    // Function to send request back to pending status
+    function sendBackToPending(requestId) {
+      // Remove logistic data to mark as pending
+      localStorage.removeItem(`logistic_${requestId}`);
+
+      // Optionally clear machine data note to avoid confusion
+      const machineDataStr = localStorage.getItem(`machine_${requestId}`);
+      if (machineDataStr) {
+        try {
+          const machineData = JSON.parse(machineDataStr);
+          if (machineData.requesterNote) {
+            delete machineData.requesterNote;
+            localStorage.setItem(`machine_${requestId}`, JSON.stringify(machineData));
+          }
+        } catch (e) {
+          console.error('Error parsing machine data:', e);
+        }
+      }
+
+      alert('Request has been sent back to pending status.');
+
+      // Re-render the requests list to update UI
+      loadUserRequests(localStorage.getItem('username'));
+    }
+
+    // Function to send request back to request viewer
+    function sendBackToViewer(requestId) {
+      // Get the current machine data
+      const machineDataStr = localStorage.getItem(`machine_${requestId}`);
+      if (machineDataStr) {
+        try {
+          const machineData = JSON.parse(machineDataStr);
+          
+          // Update the status to remove sent-back status
+          delete machineData.status;
+          
+          // Save the updated machine data
+          localStorage.setItem(`machine_${requestId}`, JSON.stringify(machineData));
+          
+          alert('Request has been sent back to the request viewer for processing.');
+          
+          // Re-render the requests list to update UI
+          loadUserRequests(localStorage.getItem('username'));
+        } catch (e) {
+          console.error('Error parsing machine data:', e);
+          alert('Error processing the request.');
+        }
+      } else {
+        alert('No machine data found for this request.');
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Manager Approval Dashboard - Asiacell LSR Service</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 40px;
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      min-height: 100vh;
+    }
+    .auth-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding: 15px 20px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      border-left: 4px solid #dc3545;
+    }
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .welcome-text {
+      font-size: 14px;
+      color: #495057;
+    }
+    .logout-btn {
+      padding: 8px 16px;
+      background: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+    .logout-btn:hover {
+      background: #c82333;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      overflow: hidden;
+      border: 1px solid #e9ecef;
+    }
+    header {
+      background: white;
+      color: #495057;
+      padding: 30px;
+      text-align: center;
+      border-radius: 10px 10px 0 0;
+      border-bottom: 1px solid #e9ecef;
+    }
+    .logo {
+      font-size: 28px;
+      font-weight: bold;
+      color: #dc3545;
+      margin-bottom: 10px;
+    }
+    h2 {
+      margin: 0;
+      font-weight: 300;
+      font-size: 22px;
+    }
+    .content {
+      padding: 30px;
+    }
+    .card {
+      background: #ffffff;
+      padding: 25px;
+      border-radius: 15px;
+      margin-bottom: 30px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+      border: 1px solid #e0e0e0;
+    }
+    .requests-list {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      margin-top: 20px;
+    }
+    .request-item {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 10px;
+      border-left: 4px solid #dc3545;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 2px solid #e9ecef;
+    }
+    .request-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(220, 53, 69, 0.2);
+      border-color: #dc3545;
+    }
+    .request-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #dee2e6;
+    }
+    .sr-number {
+      font-weight: bold;
+      color: #dc3545;
+      font-size: 16px;
+    }
+    .request-date {
+      color: #6c757d;
+      font-size: 14px;
+    }
+    .request-details {
+      margin-bottom: 15px;
+    }
+    .request-detail {
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+    }
+    .request-detail strong {
+      color: #495057;
+      min-width: 120px;
+      font-size: 14px;
+    }
+    .request-detail span {
+      color: #495057;
+      font-size: 14px;
+    }
+    .status-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .status-pending {
+      background: #fff3cd;
+      color: #856404;
+    }
+    .status-approved {
+      background: #d4edda;
+      color: #155724;
+    }
+    .status-rejected {
+      background: #f8d7da;
+      color: #721c24;
+    }
+    .action-btn {
+      margin-top: 10px;
+      padding: 8px 16px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.3s ease;
+      margin-right: 10px;
+    }
+    .action-btn:hover {
+      background: #0056b3;
+    }
+    .rejected-btn {
+      background: #dc3545;
+    }
+    .rejected-btn:hover {
+      background: #a71e2a;
+    }
+    .approved-requests, .rejected-requests {
+      margin-top: 30px;
+    }
+    .approved-item, .rejected-item {
+      background: #e9ecef;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      border-left: 4px solid #28a745;
+    }
+    .rejected-item {
+      border-left-color: #dc3545;
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-header">
+    <div class="logo">Asiacell LSR Service</div>
+    <div class="user-info">
+      <span class="welcome-text" id="welcomeText">Welcome, </span>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+  </div>
+  <div class="container">
+    <header>
+      <div class="logo">Asiacell LSR Service</div>
+      <h2>Manager Approval Dashboard</h2>
+    </header>
+    <div class="content">
+      <div class="card">
+        <h3>Requests waiting Your Approval</h3>
+        <div id="pendingRequestsList" class="requests-list">
+          <!-- Pending requests will be dynamically populated here -->
+        </div>
+      </div>
+      <div class="card approved-requests">
+        <h3>Requests You Approved</h3>
+        <div id="approvedRequestsList" class="requests-list">
+          <!-- Approved requests will be dynamically populated here -->
+        </div>
+      </div>
+      <div class="card rejected-requests">
+        <h3>Requests You Rejected</h3>
+        <div id="rejectedRequestsList" class="requests-list">
+          <!-- Rejected requests will be dynamically populated here -->
+        </div>
+      </div>
+      <div class="card sent-back-requests">
+        <h3>Requests You Sent Back to Requester</h3>
+        <div id="sentBackRequestsList" class="requests-list">
+          <!-- Sent back requests will be dynamically populated here -->
+        </div>
+      </div>
+      <div class="card completion-approval-requests">
+        <h3>Request Waiting Action Confirmation</h3>
+        <div id="completionApprovalRequestsList" class="requests-list">
+          <!-- Pending completion approval requests will be dynamically populated here -->
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const isAuthenticated = localStorage.getItem('authenticated') === 'true';
+      const username = localStorage.getItem('username');
+      const userRole = localStorage.getItem('userRole');
+      if (!isAuthenticated || !username || userRole !== 'chief') {
+        localStorage.removeItem('authenticated');
+        localStorage.removeItem('username');
+        localStorage.removeItem('userRole');
+        window.location.href = 'login.html';
+        return;
+      }
+      document.getElementById('welcomeText').textContent = 'Welcome, ' + username;
+      renderPendingRequests();
+      renderApprovedRequests();
+      renderRejectedRequests();
+      renderSentBackRequests();
+      renderCompletionApprovalRequests();
+
+      // Update local storage data every 3 seconds
+      setInterval(() => {
+        renderPendingRequests();
+        renderApprovedRequests();
+        renderRejectedRequests();
+        renderSentBackRequests();
+        renderCompletionApprovalRequests();
+      }, 3000);
+    });
+
+    function renderPendingRequests() {
+      const container = document.getElementById('pendingRequestsList');
+      container.innerHTML = '';
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key.startsWith('pending_chief_approval_')) {
+          try {
+            const requestData = JSON.parse(localStorage.getItem(key));
+            const requestId = key.replace('pending_chief_approval_', '');
+            if (requestData.chiefName !== localStorage.getItem('username')) {
+              // Only show requests assigned to this chief
+              continue;
+            }
+            const requestHtml = `
+              <div class="request-item" id="request-${requestId}">
+                <div class="request-header">
+                  <div class="sr-number">${requestData.srNumber || 'SR-N/A'}</div>
+                  <div class="status-badge status-pending">waiting</div>
+                </div>
+                <div class="request-details">
+                  <div class="request-detail"><strong>Department:</strong> <span>${requestData.department || 'Not specified'}</span></div>
+                  <div class="request-detail"><strong>Requester:</strong> <span>${requestData.requesterName || 'Not specified'}</span></div>
+                  <div class="request-detail"><strong>Request Date:</strong> <span>${requestData.requestDate || 'Not specified'}</span></div>
+                  <div class="request-detail"><strong>Selected Service Details:</strong> <span>${Array.isArray(requestData.serviceDetail) ? requestData.serviceDetail.join(', ') : (requestData.serviceDetail || 'None')}</span></div>
+                  <div class="request-detail"><strong>Additional Details:</strong> <span>${requestData.details || 'Not specified'}</span></div>
+                </div>
+                <button class="action-btn" onclick="approveRequest('${requestId}')">Approve</button>
+                <button class="action-btn" style="background: #ffc107; color: #000;" onclick="sendBackToRequester('${requestId}')">Send Back to Requester</button>
+                <button class="action-btn rejected-btn" onclick="rejectRequest('${requestId}')">Reject</button>
+              </div>
+            `;
+            container.insertAdjacentHTML('beforeend', requestHtml);
+          } catch (e) {
+            console.error('Error parsing pending chief approval request:', e);
+          }
+        }
+      }
+      if (container.innerHTML === '') {
+        container.innerHTML = '<p>No requests waiting your approval.</p>';
+      }
+    }
+
+    function renderApprovedRequests() {
+      const container = document.getElementById('approvedRequestsList');
+      container.innerHTML = '';
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key.startsWith('approved_chief_approval_')) {
+          try {
+            const requestData = JSON.parse(localStorage.getItem(key));
+            const requestId = key.replace('approved_chief_approval_', '');
+            if (requestData.chiefName !== localStorage.getItem('username')) {
+              continue;
+            }
+            const requestHtml = `
+              <div class="request-item approved-item" id="approved-request-${requestId}">
+                <div class="request-header">
+                  <div class="sr-number">${requestData.srNumber || 'SR-N/A'}</div>
+                  <div class="status-badge status-approved">Approved</div>
+                </div>
+                <div class="request-details">
+                  <div class="request-detail"><strong>Department:</strong> <span>${requestData.department || 'Not specified'}</span></div>
+                  <div class="request-detail"><strong>Requester:</strong> <span>${requestData.requesterName || 'Not specified'}</span></div>
+                  <div class="request-detail"><strong>Request Date:</strong> <span>${requestData.requestDate || 'Not specified'}</span></div>
+                  <div class="request-detail"><strong>Selected Service Details:</strong> <span>${Array.isArray(requestData.serviceDetail) ? requestData.serviceDetail.join(', ') : (requestData.serviceDetail || 'None')}</span></div>
+                  <div class="request-detail"><strong>Additional Details:</strong> <span>${requestData.details || 'Not specified'}</span></div>
+                </div>
+              </div>
+            `;
+            container.insertAdjacentHTML('beforeend', requestHtml);
+          } catch (e) {
+            console.error('Error parsing approved chief approval request:', e);
+          }
+        }
+      }
+      if (container.innerHTML === '') {
+        container.innerHTML = '<p>No requests approved by you yet.</p>';
+      }
+    }
+
+    function renderRejectedRequests() {
+      const container = document.getElementById('rejectedRequestsList');
+      container.innerHTML = '';
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key.startsWith('rejected_chief_approval_')) {
+          try {
+            const requestData = JSON.parse(localStorage.getItem(key));
+            const requestId = key.replace('rejected_chief_approval_', '');
+            if (requestData.chiefName !== localStorage.getItem('username')) {
+              continue;
+            }
+            const requestHtml = `
+              <div class="request-item rejected-item" id="rejected-request-${requestId}">
+                <div class="request-header">
+                  <div class="sr-number">${requestData.srNumber || 'SR-N/A'}</div>
+                  <div class="status-badge status-rejected">Rejected</div>
+                </div>
+                <div class="request-details">
+                  <div class="request-detail"><strong>Department:</strong> <span>${requestData.department || 'Not specified'}</span></div>
+                  <div class="request-detail"><strong>Requester:</strong> <span>${requestData.requesterName || 'Not specified'}</span></div>
+                  <div class="request-detail"><strong>Request Date:</strong> <span>${requestData.requestDate || 'Not specified'}</span></div>
+                  <div class="request-detail"><strong>Selected Service Details:</strong> <span>${Array.isArray(requestData.serviceDetail) ? requestData.serviceDetail.join(', ') : (requestData.serviceDetail || 'None')}</span></div>
+                  <div class="request-detail"><strong>Additional Details:</strong> <span>${requestData.details || 'Not specified'}</span></div>
+                </div>
+              </div>
+            `;
+            container.insertAdjacentHTML('beforeend', requestHtml);
+          } catch (e) {
+            console.error('Error parsing rejected chief approval request:', e);
+          }
+        }
+      }
+      if (container.innerHTML === '') {
+        container.innerHTML = '<p>No requests rejected by you yet.</p>';
+      }
+    }
+
+    function renderSentBackRequests() {
+      const container = document.getElementById('sentBackRequestsList');
+      container.innerHTML = '';
+      const currentUsername = localStorage.getItem('username');
+      
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key.startsWith('request_')) {
+          try {
+            const requestId = key.replace('request_', '');
+            const requestData = JSON.parse(localStorage.getItem(key));
+            
+            // Check if this request belongs to this chief
+            if (requestData.chiefName !== currentUsername) {
+              continue;
+            }
+            
+            // Check if there's machine data with sent-back-from-chief status
+            const machineDataStr = localStorage.getItem(`machine_${requestId}`);
+            if (machineDataStr) {
+              const machineData = JSON.parse(machineDataStr);
+              if (machineData.status === 'sent-back-from-chief') {
+                const requestHtml = `
+                  <div class="request-item" style="background: #fff3cd; border-left-color: #ffc107;" id="sent-back-request-${requestId}">
+                    <div class="request-header">
+                      <div class="sr-number">${requestData.srNumber || 'SR-N/A'}</div>
+                      <div class="status-badge" style="background: #ffc107; color: #000;">Sent Back</div>
+                    </div>
+                    <div class="request-details">
+                      <div class="request-detail"><strong>Department:</strong> <span>${requestData.department || 'Not specified'}</span></div>
+                      <div class="request-detail"><strong>Requester:</strong> <span>${requestData.requesterName || 'Not specified'}</span></div>
+                      <div class="request-detail"><strong>Request Date:</strong> <span>${requestData.requestDate || 'Not specified'}</span></div>
+                      <div class="request-detail"><strong>Selected Service Details:</strong> <span>${Array.isArray(requestData.serviceDetail) ? requestData.serviceDetail.join(', ') : (requestData.serviceDetail || 'None')}</span></div>
+                      <div class="request-detail"><strong>Additional Details:</strong> <span>${requestData.details || 'Not specified'}</span></div>
+                      <div class="request-detail" style="background: #fff3cd; border-left: 4px solid #ffc107; padding: 10px; margin-top: 10px; border-radius: 5px;">
+                        <strong style="color: #856404;">Your Note to Requester:</strong>
+                        <span style="color: #856404;">${machineData.chiefNote || 'No note provided'}</span>
+                      </div>
+                    </div>
+                  </div>
+                `;
+                container.insertAdjacentHTML('beforeend', requestHtml);
+              }
+            }
+          } catch (e) {
+            console.error('Error parsing sent-back request:', e);
+          }
+        }
+      }
+      
+      if (container.innerHTML === '') {
+        container.innerHTML = '<p>No requests sent back to requester yet.</p>';
+      }
+    }
+
+    function approveRequest(requestId) {
+      const key = `pending_chief_approval_${requestId}`;
+      const requestDataStr = localStorage.getItem(key);
+      if (!requestDataStr) {
+        alert('Request data not found.');
+        return;
+      }
+      const requestData = JSON.parse(requestDataStr);
+      // Move to approved chief approval
+      localStorage.setItem(`approved_chief_approval_${requestId}`, requestDataStr);
+      localStorage.removeItem(key);
+      // Mark as chief approved
+      localStorage.setItem(`chiefApproved_${requestId}`, 'true');
+
+      // Check if this is a re-submitted request
+      if (requestData.isResubmitted) {
+        // For re-submitted requests, send directly to logistic control
+        localStorage.setItem(`pending_request_${requestId}`, requestDataStr);
+        alert(`Request ${requestData.srNumber} approved and forwarded to Logistic Supervisor.`);
+      } else {
+        // For new requests, send to logistic control
+        localStorage.setItem(`pending_request_${requestId}`, requestDataStr);
+        alert(`Request ${requestData.srNumber} approved and forwarded to Logistic Supervisor.`);
+      }
+    }
+
+    function rejectRequest(requestId) {
+      const key = `pending_chief_approval_${requestId}`;
+      const requestDataStr = localStorage.getItem(key);
+      if (!requestDataStr) {
+        alert('Request data not found.');
+        return;
+      }
+      const requestData = JSON.parse(requestDataStr);
+      // Move to rejected chief approval
+      localStorage.setItem(`rejected_chief_approval_${requestId}`, requestDataStr);
+      localStorage.removeItem(key);
+      alert(`Request ${requestData.srNumber} rejected.`);
+      renderPendingRequests();
+      renderRejectedRequests();
+    }
+
+    function sendBackToRequester(requestId) {
+      const key = `pending_chief_approval_${requestId}`;
+      const requestDataStr = localStorage.getItem(key);
+      if (!requestDataStr) {
+        alert('Request data not found.');
+        return;
+      }
+      const requestData = JSON.parse(requestDataStr);
+      const chiefNote = prompt('Enter a note for the requester:');
+      if (chiefNote !== null && chiefNote.trim() !== '') {
+        // Save request data for requester
+        localStorage.setItem(`request_${requestId}`, requestDataStr);
+        // Create machine data with sent-back status and note
+        const machineData = {
+          status: 'sent-back-from-chief',
+          chiefNote: chiefNote.trim()
+        };
+        localStorage.setItem(`machine_${requestId}`, JSON.stringify(machineData));
+        // Remove from pending
+        localStorage.removeItem(key);
+        alert(`Request ${requestData.srNumber} sent back to requester with your note.`);
+        renderPendingRequests();
+      }
+    }
+
+    function renderCompletionApprovalRequests() {
+      const container = document.getElementById('completionApprovalRequestsList');
+      container.innerHTML = '';
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key.startsWith('pending_chief_completion_approval_')) {
+          try {
+            const machineData = JSON.parse(localStorage.getItem(key));
+            const requestId = key.replace('pending_chief_completion_approval_', '');
+            const requestData = JSON.parse(localStorage.getItem(`request_${requestId}`) || '{}');
+            if (requestData.chiefName !== localStorage.getItem('username')) {
+              // Only show requests assigned to this chief
+              continue;
+            }
+            const requestHtml = `
+              <div class="request-item" id="completion-request-${requestId}">
+                <div class="request-header">
+                  <div class="sr-number">${requestData.srNumber || 'SR-N/A'}</div>
+                  <div class="status-badge status-pending">waiting Completion Approval</div>
+                </div>
+                <div class="request-details">
+                  <div class="request-detail"><strong>Department:</strong> <span>${requestData.department || 'Not specified'}</span></div>
+                  <div class="request-detail"><strong>Requester:</strong> <span>${requestData.requesterName || 'Not specified'}</span></div>
+                  <div class="request-detail"><strong>Work Complete Date:</strong> <span>${machineData.completeWorkDate || 'Not specified'}</span></div>
+                  <div class="request-detail"><strong>Note:</strong> <span>Work has been completed by Logistic Officer</span></div>
+                  <div class="request-detail"><strong>Selected Service Details:</strong> <span>${Array.isArray(requestData.serviceDetail) ? requestData.serviceDetail.join(', ') : (requestData.serviceDetail || 'None')}</span></div>
+                  <div class="request-detail"><strong>Additional Details:</strong> <span>${requestData.details || 'Not specified'}</span></div>
+                </div>
+                <button class="action-btn" onclick="approveCompletion('${requestId}')">Approve Completion</button>
+              </div>
+            `;
+            container.insertAdjacentHTML('beforeend', requestHtml);
+          } catch (e) {
+            console.error('Error parsing pending chief completion approval request:', e);
+          }
+        }
+      }
+      if (container.innerHTML === '') {
+        container.innerHTML = '<p>No requests waiting work complete approval.</p>';
+      }
+    }
+
+    function approveCompletion(requestId) {
+      const key = `pending_chief_completion_approval_${requestId}`;
+      const machineDataStr = localStorage.getItem(key);
+      if (!machineDataStr) {
+        alert('Request data not found.');
+        return;
+      }
+      const machineData = JSON.parse(machineDataStr);
+      // Calculate total price
+      let totalPrice = 0;
+      if (machineData.items && Array.isArray(machineData.items)) {
+        for (let item of machineData.items) {
+          if (item.price && item.quantity) {
+            totalPrice += item.price * item.quantity;
+          }
+        }
+      }
+      machineData.totalPrice = totalPrice;
+      machineData.status = 'completion_approved';
+      // Save back to machine data as in-progress
+      localStorage.setItem(`machine_${requestId}`, JSON.stringify(machineData));
+      localStorage.removeItem(key);
+      // Store data for final.html (but don't redirect)
+      const requestData = JSON.parse(localStorage.getItem(`request_${requestId}`) || '{}');
+      localStorage.setItem('currentRequestId', requestId);
+      localStorage.setItem('requesterData', JSON.stringify(requestData));
+      localStorage.setItem('logisticData', JSON.stringify(machineData));
+
+      if (requestData.warehouseOfficerNeeded) {
+        // Send to store keeper for approval
+        localStorage.setItem(`pending_store_keeper_approval_${requestId}`, machineDataStr);
+        alert(`Request ${requestData.srNumber} completion approved and forwarded to Store Keeper for approval.`);
+      } else {
+        // Request is already assigned to request viewer, just update status - don't send to logistic-control
+        alert(`Request ${requestData.srNumber} completion approved. The assigned Request Viewer can now proceed with logistic processing.`);
+      }
+      // Stay in chief.html and refresh the lists
+      renderCompletionApprovalRequests();
+    }
+
+    function logout() {
+      localStorage.removeItem('authenticated');
+      localStorage.removeItem('username');
+      localStorage.removeItem('userRole');
+      window.location.href = 'login.html';
+    }
+  </script>
+</body>
+</html>
